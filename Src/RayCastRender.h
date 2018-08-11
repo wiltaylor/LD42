@@ -26,7 +26,6 @@ public:
 
 	void Draw();
 
-	void addObject(GameObject* gameObject);
 	void drawObjects();
 
 	void setCelingColour(const Uint32 colour) { m_celingColour = colour; }

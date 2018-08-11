@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 #include "LevelBlock.h"
+#include "GameObject.h"
+#include <vector>
+
 class Level
 {
 public:
@@ -11,6 +14,10 @@ public:
     int getHeight() { return m_height; }
     int getPlayerStartX() { return m_playerStartX; }
     int getPlayerStartY() { return m_playerStartY; }
+	const std::vector<GameObject*> &getGameObjects() { return m_gameObjects; }
+
+	void update();
+
 
     const LevelBlock* getBlock(int x, int y)
     {
@@ -27,5 +34,6 @@ private:
     int m_playerStartY;
 
     LevelBlock* m_levelBlocks;
+	std::vector<GameObject*> m_gameObjects;
 
 };

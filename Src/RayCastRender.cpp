@@ -86,15 +86,13 @@ void RayCastRenderer::Draw()
 	}
 }
 
-void RayCastRenderer::addObject(GameObject* gameObject)
-{
-	m_gameObjects.push_back(gameObject);
-}
-
 void RayCastRenderer::drawObjects()
 {
-	for(auto &obj : m_gameObjects)
+	for(auto &obj : m_level->getGameObjects())
 	{
+		if(!obj->visible)
+			continue;
+
 		float vecX = obj->x - m_playerX;
 		float vecY = obj->y - m_playerY;
 		float distance = sqrtf(vecX * vecX + vecY * vecY);

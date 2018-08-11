@@ -16,21 +16,9 @@ Game::~Game()
 
 void Game::start()
 {
-	AssetLoader assetloader;
-
-	std::string filename = "pillar.png";
-
-
-	m_testpillar = new GameObject;
-
-	m_testpillar->vx = 0.0f;
-	m_testpillar->vy = 0.0f;
-	m_testpillar->x = 8.0f;
-	m_testpillar->y = 8.0f;
-	m_testpillar->texture = assetloader.loadTexture(filename);
-
 	Level level("level1.txt");
 	m_physics = new Physics(&level);
+
 
 	m_rayCastRenderer->setMapData(&level, level.getWidth(),level.getHeight());
 	
@@ -52,7 +40,7 @@ void Game::start()
 		float ElapsedTime = elapsedTime.count();
 		
 		m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getA()));
-
+		level.update();
 		update(ElapsedTime);
 	}
 }
@@ -62,6 +50,7 @@ void Game::update(float deltaTime)
 	m_renderer->cleanPixelBuffer();
 
 	m_input.update();
+	m_physics->setPlayerPosition(m_player.getX(), m_player.getY(), m_player.getA());
 
 	if (m_input.keyDown(SDL_SCANCODE_ESCAPE) || m_input.hasQuit())
 		m_running = false;
@@ -78,10 +67,13 @@ void Game::update(float deltaTime)
 		float newX = m_player.getX() + sinf(m_player.getA()) * 5.0f * deltaTime;
 		float newY = m_player.getY() + cosf(m_player.getA()) * 5.0f * deltaTime;
 
-		if (m_physics->canMove(newX, newY))
+		if (m_physics->testPosition(newX, newY, true) == HIT_NOTHING)
 		{
 			m_player.setX(newX);
 			m_player.setY(newY);
+
+			if (m_physics->getLastHitObject() != nullptr)
+				m_physics->getLastHitObject()->OnPlayerTouch();
 		}
 	}
 
@@ -90,10 +82,13 @@ void Game::update(float deltaTime)
 		float newX = m_player.getX() - sinf(m_player.getA()) * 5.0f * deltaTime;
 		float newY = m_player.getY() - cosf(m_player.getA()) * 5.0f * deltaTime;
 
-		if (m_physics->canMove(newX, newY))
+		if (m_physics->testPosition(newX, newY, true) == HIT_NOTHING)
 		{
 			m_player.setX(newX);
 			m_player.setY(newY);
+
+			if (m_physics->getLastHitObject() != nullptr)
+				m_physics->getLastHitObject()->OnPlayerTouch();
 		}
 	}
 
@@ -102,10 +97,13 @@ void Game::update(float deltaTime)
 		float newX = m_player.getX() - cosf(m_player.getA()) * 5.0f * deltaTime;
 		float newY = m_player.getY() + sinf(m_player.getA()) * 5.0f * deltaTime;
 
-		if (m_physics->canMove(newX, newY))
+		if (m_physics->testPosition(newX, newY, true) == HIT_NOTHING)
 		{
 			m_player.setX(newX);
 			m_player.setY(newY);
+
+			if (m_physics->getLastHitObject() != nullptr)
+				m_physics->getLastHitObject()->OnPlayerTouch();
 		}
 	}
 
@@ -114,20 +112,19 @@ void Game::update(float deltaTime)
 		float newX = m_player.getX() + cosf(m_player.getA()) * 5.0f * deltaTime;
 		float newY = m_player.getY() - sinf(m_player.getA()) * 5.0f * deltaTime;
 
-		if (m_physics->canMove(newX, newY))
+		if (m_physics->testPosition(newX, newY, true) == HIT_NOTHING)
 		{
 			m_player.setX(newX);
 			m_player.setY(newY);
+
+			if (m_physics->getLastHitObject() != nullptr)
+				m_physics->getLastHitObject()->OnPlayerTouch();
 		}
 	}
-
-
-	m_rayCastRenderer->addObject(m_testpillar);
 
 	m_rayCastRenderer->setPlayerPosition(m_player.getX(), m_player.getY(), m_player.getA());
 	m_rayCastRenderer->Draw();
 	m_rayCastRenderer->drawObjects();
-
 	m_renderer->flip();
 }
 

@@ -4,9 +4,19 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include "PickUp.h"
+#include <algorithm>
 
 Level::Level(const std::string& filename)
 {
+
+	AssetLoader assetloader;
+	std::string pillarfilename = "pillar.png";
+	std::string chestfilename = "chest.png";
+
+	auto pillarTexture = assetloader.loadTexture(pillarfilename);
+	auto chestTexture = assetloader.loadTexture(chestfilename);
+
 	std::ifstream levelFile;
 	levelFile.open(filename, std::ifstream::in);
 	
@@ -38,9 +48,48 @@ Level::Level(const std::string& filename)
                     m_levelBlocks[index].passable = false;
                     m_levelBlocks[index].textureIndex = 1;
                     break;
+				case '@':
+				{
+					auto piller = new GameObject();
+
+					piller->visible = true;
+					piller->vx = 0.0f;
+					piller->vy = 0.0f;
+					piller->x = x;
+					piller->y = y;
+					piller->solid = true;
+					piller->texture = pillarTexture;
+
+					m_gameObjects.push_back(piller);
+
+					m_levelBlocks[index].passable = true;
+					m_levelBlocks[index].textureIndex = 0;
+				}
+					break;
+				case 't':
+				{
+					auto chest = new PickUp();
+
+					chest->visible = true;
+					chest->vx = 0.0f;
+					chest->vy = 0.0f;
+					chest->x = x;
+					chest->y = y;
+					chest->solid = false;
+					chest->texture = chestTexture;
+
+					m_gameObjects.push_back(chest);
+
+					m_levelBlocks[index].passable = true;
+					m_levelBlocks[index].textureIndex = 0;
+				}
+				break;
                 case 'p':
                     m_playerStartX = x;
                     m_playerStartY = y;
+					m_levelBlocks[index].passable = true;
+					m_levelBlocks[index].textureIndex = 0;
+					break;
                 default:
                     m_levelBlocks[index].passable = true;
                     m_levelBlocks[index].textureIndex = 0;
@@ -72,4 +121,17 @@ Level::Level(const std::string& filename)
 
 Level::~Level() {
     delete[] m_levelBlocks;
+}
+
+void Level::update()
+{
+	std::remove_if(m_gameObjects.begin(), m_gameObjects.end(), [&](GameObject* o)
+	{
+		if(o->cleanUp)
+		{
+			delete o;
+			return true;
+		}
+		return false;
+	});
 }

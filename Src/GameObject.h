@@ -9,4 +9,9 @@ struct GameObject
 	float vx;
 	float vy;
 	Texture* texture;
+	bool projectile;
+	bool solid;
+	bool cleanUp;
+
+	virtual void OnPlayerTouch(){}
 };

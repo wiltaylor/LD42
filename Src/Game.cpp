@@ -10,6 +10,7 @@ Game::Game()
 	m_assetLoader.loadTexture("pillar.png", "pillar");
 	m_assetLoader.loadTexture("chest.png", "chest");
 	m_assetLoader.loadTexture("MagicBolt.png", "magicbolt");
+	m_assetLoader.loadTexture("hellblob.png", "hellblob");
 
 	m_renderer = new Renderer(800, 600);
 	m_rayCastRenderer = new RayCastRenderer(m_renderer, &m_assetLoader);

@@ -11,6 +11,7 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader)
 {
 	const auto pillarTexture = assetLoader->getTextureId("pillar");
 	const auto chestTexture = assetLoader->getTextureId("chest");
+	const auto hellBlobTexture = assetLoader->getTextureId("hellblob");
 
 	std::ifstream levelFile;
 	levelFile.open(filename, std::ifstream::in);
@@ -56,6 +57,24 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader)
 					piller->texture = pillarTexture;
 
 					m_gameObjects.push_back(piller);
+
+					m_levelBlocks[index].passable = true;
+					m_levelBlocks[index].textureIndex = 0;
+				}
+					break;
+				case 'h':
+				{
+					auto hellblob = new GameObject();
+
+					hellblob->visible = true;
+					hellblob->vx = 0.0f;
+					hellblob->vy = 0.0f;
+					hellblob->x = static_cast<float>(x);
+					hellblob->y = static_cast<float>(y);
+					hellblob->solid = false;
+					hellblob->texture = hellBlobTexture;
+
+					m_gameObjects.push_back(hellblob);
 
 					m_levelBlocks[index].passable = true;
 					m_levelBlocks[index].textureIndex = 0;

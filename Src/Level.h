@@ -3,11 +3,12 @@
 #include "LevelBlock.h"
 #include "GameObject.h"
 #include <vector>
+#include "Player.h"
 
 class Level
 {
 public:
-    explicit Level(const std::string& filename, AssetLoader* assetLoader);
+    explicit Level(const std::string& filename, AssetLoader* assetLoader, Player* player);
     ~Level();
 
     int getWidth() { return m_width; }
@@ -17,7 +18,7 @@ public:
 	const std::vector<GameObject*> &getGameObjects() { return m_gameObjects; }
 	void AddObject(GameObject* obj) { m_gameObjects.push_back(obj); }
 
-	void update();
+	void update(const float deltaTime);
 
 
     const LevelBlock* getBlock(int x, int y)
@@ -33,6 +34,7 @@ private:
     int m_height;
     int m_playerStartX;
     int m_playerStartY;
+	Player* m_player;
 
     LevelBlock* m_levelBlocks;
 	std::vector<GameObject*> m_gameObjects;

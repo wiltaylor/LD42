@@ -23,7 +23,7 @@ Game::~Game()
 
 void Game::start()
 {
-	m_level = new Level("level1.txt", &m_assetLoader);
+	m_level = new Level("level1.txt", &m_assetLoader, &m_player);
 	m_physics = new Physics(m_level);
 
 	m_rayCastRenderer->setMapData(m_level, m_level->getWidth(), m_level->getHeight());
@@ -135,12 +135,13 @@ void Game::update(float deltaTime)
 		auto fireball = new GameObject();
 
 		fireball->visible = true;
-		fireball->projectile = true;
+		fireball->physicsObject = true;
 		fireball->vx = sinf(m_player.getA()) * 4.0f;
 		fireball->vy = cosf(m_player.getA()) * 4.0f;
 		fireball->x = m_player.getX();
 		fireball->y = m_player.getY();
 		fireball->texture = m_assetLoader.getTextureId("magicbolt");
+		fireball->projectile = true;
 
 		m_level->AddObject(fireball);
 
@@ -148,7 +149,7 @@ void Game::update(float deltaTime)
 	}
 
 	m_physics->update(deltaTime);
-	m_level->update();
+	m_level->update(deltaTime);
 	m_rayCastRenderer->setPlayerPosition(m_player.getX(), m_player.getY(), m_player.getA());
 	m_rayCastRenderer->Draw();
 	m_rayCastRenderer->drawObjects();

@@ -15,9 +15,11 @@ struct GameObject
 	float vx;
 	float vy;
 	int texture;
-	bool projectile;
+	bool physicsObject;
 	bool solid;
 	bool cleanUp;
+	bool projectile;
 
 	virtual void OnPlayerTouch(){}
+	virtual void OnUpdate(const float deltaTime){}
 };

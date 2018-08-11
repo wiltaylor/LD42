@@ -6,12 +6,15 @@
 #include <iostream>
 #include "PickUp.h"
 #include <algorithm>
+#include "NPC.h"
 
-Level::Level(const std::string& filename, AssetLoader* assetLoader)
+Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* player)
 {
 	const auto pillarTexture = assetLoader->getTextureId("pillar");
 	const auto chestTexture = assetLoader->getTextureId("chest");
 	const auto hellBlobTexture = assetLoader->getTextureId("hellblob");
+
+	m_player = player;
 
 	std::ifstream levelFile;
 	levelFile.open(filename, std::ifstream::in);
@@ -64,7 +67,7 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader)
 					break;
 				case 'h':
 				{
-					auto hellblob = new GameObject();
+					auto hellblob = new NPC(m_player);
 
 					hellblob->visible = true;
 					hellblob->vx = 0.0f;
@@ -73,6 +76,8 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader)
 					hellblob->y = static_cast<float>(y);
 					hellblob->solid = false;
 					hellblob->texture = hellBlobTexture;
+					hellblob->physicsObject = true;
+					hellblob->projectile = false;
 
 					m_gameObjects.push_back(hellblob);
 
@@ -137,7 +142,7 @@ Level::~Level() {
     delete[] m_levelBlocks;
 }
 
-void Level::update()
+void Level::update(const float deltaTime)
 {
 	std::remove_if(m_gameObjects.begin(), m_gameObjects.end(), [&](GameObject* o)
 	{
@@ -148,4 +153,7 @@ void Level::update()
 		}
 		return false;
 	});
+
+	for (auto &o : m_gameObjects)
+		o->OnUpdate(deltaTime);
 }

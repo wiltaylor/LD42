@@ -58,7 +58,7 @@ void Physics::update(float deltaTime)
 		if (obj->cleanUp)
 			continue;
 
-		if(!obj->projectile)
+		if(!obj->physicsObject)
 			continue;
 
 		float newX = obj->x + obj->vx * deltaTime;
@@ -67,10 +67,22 @@ void Physics::update(float deltaTime)
 		auto hit = testPosition(newX, newY);
 
 		if (hit == HIT_WALL || hit == HIT_OBJECT)
-			obj->cleanUp = true;
-		
-		obj->x = newX;
-		obj->y = newY;
+		{
+			if (obj->projectile)
+				obj->cleanUp = true;
+
+			obj->vx = 0;
+			obj->vy = 0;
+		}
+		else if(hit == HIT_PLAYER)
+		{
+			//do player damage if npc
+		}
+		else
+		{
+			obj->x = newX;
+			obj->y = newY;
+		}		
 	}
 
 	m_lastHitObject = nullptr;

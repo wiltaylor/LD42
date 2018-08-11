@@ -92,7 +92,7 @@ void RayCastRenderer::drawObjects()
 {
 	for(auto &obj : m_level->getGameObjects())
 	{
-		if(!obj->visible)
+		if(!obj->visible || obj->cleanUp)
 			continue;
 
 		float vecX = obj->x - m_playerX;

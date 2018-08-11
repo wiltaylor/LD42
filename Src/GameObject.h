@@ -3,6 +3,12 @@
 
 struct GameObject
 {
+
+	virtual ~GameObject()
+	{
+		
+	}
+
 	bool visible;
 	float x;
 	float y;

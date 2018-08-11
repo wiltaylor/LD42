@@ -22,14 +22,13 @@ Game::~Game()
 
 void Game::start()
 {
-	Level level("level1.txt", &m_assetLoader);
-	m_physics = new Physics(&level);
+	m_level = new Level("level1.txt", &m_assetLoader);
+	m_physics = new Physics(m_level);
 
-
-	m_rayCastRenderer->setMapData(&level, level.getWidth(),level.getHeight());
+	m_rayCastRenderer->setMapData(m_level, m_level->getWidth(), m_level->getHeight());
 	
-	m_player.setX(static_cast<float>(level.getPlayerStartX()));
-	m_player.setY(static_cast<float>(level.getPlayerStartY()));
+	m_player.setX(static_cast<float>(m_level->getPlayerStartX()));
+	m_player.setY(static_cast<float>(m_level->getPlayerStartY()));
 
 	long timeStep = 1000000;
 	long currentStep = 0;
@@ -46,13 +45,15 @@ void Game::start()
 		float ElapsedTime = elapsedTime.count();
 		
 		m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getA()));
-		level.update();
 		update(ElapsedTime);
 	}
 }
 
 void Game::update(float deltaTime)
 {
+	if (m_coolDown > 0)
+		m_coolDown -= deltaTime;
+
 	m_renderer->cleanPixelBuffer();
 
 	m_input.update();
@@ -128,6 +129,25 @@ void Game::update(float deltaTime)
 		}
 	}
 
+	if(m_input.keyDown(SDL_SCANCODE_SPACE) && m_coolDown <= 0)
+	{		
+		auto fireball = new GameObject();
+
+		fireball->visible = true;
+		fireball->projectile = true;
+		fireball->vx = sinf(m_player.getA()) * 4.0f;
+		fireball->vy = cosf(m_player.getA()) * 4.0f;
+		fireball->x = m_player.getX();
+		fireball->y = m_player.getY();
+		fireball->texture = m_assetLoader.getTextureId("magicbolt");
+
+		m_level->AddObject(fireball);
+
+		m_coolDown = m_ShootcoolDown;
+	}
+
+	m_physics->update(deltaTime);
+	m_level->update();
 	m_rayCastRenderer->setPlayerPosition(m_player.getX(), m_player.getY(), m_player.getA());
 	m_rayCastRenderer->Draw();
 	m_rayCastRenderer->drawObjects();

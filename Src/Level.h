@@ -15,6 +15,7 @@ public:
     int getPlayerStartX() { return m_playerStartX; }
     int getPlayerStartY() { return m_playerStartY; }
 	const std::vector<GameObject*> &getGameObjects() { return m_gameObjects; }
+	void AddObject(GameObject* obj) { m_gameObjects.push_back(obj); }
 
 	void update();
 

@@ -124,7 +124,7 @@ void Level::update()
 	{
 		if(o->cleanUp)
 		{
-			delete o;
+			//delete o;
 			return true;
 		}
 		return false;

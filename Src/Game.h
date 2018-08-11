@@ -23,7 +23,10 @@ private:
 	Input m_input;
 	Physics* m_physics;
 	AssetLoader m_assetLoader;
+	Level* m_level;
 	
 	void update(float deltaTime);
+	float m_coolDown = 0.0f;
+	const float m_ShootcoolDown = 3.0f;
 
 };

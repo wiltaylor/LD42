@@ -42,7 +42,7 @@ HITTYPE Physics::testPosition(float x, float y, bool skipPlayer)
 
 			if (!obj->solid)
 				continue;
-
+			
 			return HIT_OBJECT;
 		}
 	}
@@ -55,8 +55,22 @@ void Physics::update(float deltaTime)
 {
 	for (auto &obj : m_level->getGameObjects())
 	{
-		obj->x += obj->vx * deltaTime;
-		obj->y += obj->vy * deltaTime;
+		if (obj->cleanUp)
+			continue;
+
+		if(!obj->projectile)
+			continue;
+
+		float newX = obj->x + obj->vx * deltaTime;
+		float newY = obj->y + obj->vy * deltaTime;
+
+		auto hit = testPosition(newX, newY);
+
+		if (hit == HIT_WALL || hit == HIT_OBJECT)
+			obj->cleanUp = true;
+		
+		obj->x = newX;
+		obj->y = newY;
 	}
 
 	m_lastHitObject = nullptr;

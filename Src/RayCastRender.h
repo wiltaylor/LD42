@@ -7,7 +7,7 @@
 class RayCastRenderer
 {
 public:
-	RayCastRenderer(Renderer* renderer);
+	RayCastRenderer(Renderer* renderer, AssetLoader* assetLoader);
 	~RayCastRenderer();
 
 	void setPlayerPosition(float x, float y, float angle)
@@ -50,7 +50,8 @@ private:
 	const float m_maxDistance = 16.0f;
 	const float m_stepSize = 0.01f;
 
-	Texture* m_wallTexture = nullptr;
+	int m_wallTexture = -1;
 	std::vector<GameObject*> m_gameObjects;
+	AssetLoader* m_assetLoader;
 
 };

@@ -5,8 +5,14 @@
 
 Game::Game()
 {
+	//Load game textures
+	m_assetLoader.loadTexture("wall.png", "wall");
+	m_assetLoader.loadTexture("pillar.png", "pillar");
+	m_assetLoader.loadTexture("chest.png", "chest");
+	m_assetLoader.loadTexture("MagicBolt.png", "magicbolt");
+
 	m_renderer = new Renderer(800, 600);
-	m_rayCastRenderer = new RayCastRenderer(m_renderer);
+	m_rayCastRenderer = new RayCastRenderer(m_renderer, &m_assetLoader);
 }
 
 Game::~Game()
@@ -16,7 +22,7 @@ Game::~Game()
 
 void Game::start()
 {
-	Level level("level1.txt");
+	Level level("level1.txt", &m_assetLoader);
 	m_physics = new Physics(&level);
 
 

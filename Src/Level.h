@@ -7,7 +7,7 @@
 class Level
 {
 public:
-    explicit Level(const std::string& filename);
+    explicit Level(const std::string& filename, AssetLoader* assetLoader);
     ~Level();
 
     int getWidth() { return m_width; }

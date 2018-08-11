@@ -8,7 +8,7 @@ struct GameObject
 	float y;
 	float vx;
 	float vy;
-	Texture* texture;
+	int texture;
 	bool projectile;
 	bool solid;
 	bool cleanUp;

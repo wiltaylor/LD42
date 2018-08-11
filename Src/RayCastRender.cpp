@@ -59,6 +59,8 @@ void RayCastRenderer::Draw()
 		int ceiling = static_cast<int>(static_cast<float>(m_renderer->getScreenHeight() / 2.0) - m_renderer->getScreenHeight() / static_cast<float>(distanceToWall));
 		int floor = m_renderer->getScreenHeight() - ceiling;
 
+		Texture* wallTex = m_assetLoader->getTexture(m_wallTexture);
+
 		for (int y = 0; y < m_renderer->getScreenHeight(); y++)
 		{
 			if (y < ceiling)
@@ -70,7 +72,7 @@ void RayCastRenderer::Draw()
 				if(distanceToWall < m_maxDistance)
 				{
 					float sampleY = (static_cast<float>(y) - static_cast<float>(ceiling)) / (static_cast<float>(floor) - static_cast<float>(ceiling));
-					m_renderer->setPixel(x, y, m_wallTexture->sampleColour(sampleX, sampleY));
+					m_renderer->setPixel(x, y, wallTex->sampleColour(sampleX, sampleY));
 					m_depthBuffer[x] = distanceToWall;
 				
 				}else
@@ -106,10 +108,12 @@ void RayCastRenderer::drawObjects()
 
 		if(inPlayerFov && distance >= 0.5f && distance < m_maxDistance)
 		{
+			auto tex = m_assetLoader->getTexture(obj->texture);
+
 			float ceiling = static_cast<float>(m_renderer->getScreenHeight() / 2.0f) - m_renderer->getScreenHeight() / static_cast<float>(distance);
 			float floor = m_renderer->getScreenHeight() - ceiling;
 			float objHeight = floor - ceiling;
-			float objAspectRatio = static_cast<float>(obj->texture->height) / static_cast<float>(obj->texture->width);
+			float objAspectRatio = static_cast<float>(tex->height) / static_cast<float>(tex->width);
 			float objWidth = objHeight / objAspectRatio;
 			float objMiddle = (0.5f * (objectAngle / (m_fov / 2.0f)) + 0.5f) * static_cast<float>(m_renderer->getScreenWidth());
 
@@ -120,7 +124,7 @@ void RayCastRenderer::drawObjects()
 					float sampleY = y / objHeight;
 					int objColumn = static_cast<int>(objMiddle + x - (objWidth / 2.0f));
 
-					Uint32 colour = obj->texture->sampleColour(sampleX, sampleY);
+					Uint32 colour = tex->sampleColour(sampleX, sampleY);
 
 					if (objColumn >= 0 && objColumn < m_renderer->getScreenWidth() && ceiling + y >= 0 && ceiling + y < m_renderer->getScreenHeight())
 					{
@@ -141,12 +145,9 @@ void RayCastRenderer::drawObjects()
 	m_gameObjects.clear();
 }
 
-RayCastRenderer::RayCastRenderer(Renderer* renderer): m_renderer{ renderer }
+RayCastRenderer::RayCastRenderer(Renderer* renderer, AssetLoader* loader): m_renderer{ renderer }, m_assetLoader {loader}
 {
-	AssetLoader assetloader;
-
-	std::string filename = "wall.png";
-	m_wallTexture = assetloader.loadTexture(filename);
+	m_wallTexture = m_assetLoader->getTextureId("wall");
 
 	m_depthBufferSize = m_renderer->getScreenWidth();
 	m_depthBuffer = new float[m_depthBufferSize];
@@ -154,6 +155,5 @@ RayCastRenderer::RayCastRenderer(Renderer* renderer): m_renderer{ renderer }
 
 RayCastRenderer::~RayCastRenderer()
 {
-	delete m_wallTexture;
 	delete[] m_depthBuffer;	
 }

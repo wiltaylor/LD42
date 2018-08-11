@@ -5,7 +5,7 @@
 #include "Input.h"
 #include "GameObject.h"
 #include "Physics.h"
-
+#include "AssetLoader.h"
 
 class Game
 {
@@ -21,8 +21,8 @@ private:
 	RayCastRenderer* m_rayCastRenderer;
 	Player m_player;
 	Input m_input;
-	GameObject* m_testpillar;
 	Physics* m_physics;
+	AssetLoader m_assetLoader;
 	
 	void update(float deltaTime);
 

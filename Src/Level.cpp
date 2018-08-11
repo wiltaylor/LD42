@@ -7,15 +7,10 @@
 #include "PickUp.h"
 #include <algorithm>
 
-Level::Level(const std::string& filename)
+Level::Level(const std::string& filename, AssetLoader* assetLoader)
 {
-
-	AssetLoader assetloader;
-	std::string pillarfilename = "pillar.png";
-	std::string chestfilename = "chest.png";
-
-	auto pillarTexture = assetloader.loadTexture(pillarfilename);
-	auto chestTexture = assetloader.loadTexture(chestfilename);
+	const auto pillarTexture = assetLoader->getTextureId("pillar");
+	const auto chestTexture = assetLoader->getTextureId("chest");
 
 	std::ifstream levelFile;
 	levelFile.open(filename, std::ifstream::in);
@@ -55,8 +50,8 @@ Level::Level(const std::string& filename)
 					piller->visible = true;
 					piller->vx = 0.0f;
 					piller->vy = 0.0f;
-					piller->x = x;
-					piller->y = y;
+					piller->x = static_cast<float>(x);
+					piller->y = static_cast<float>(y);
 					piller->solid = true;
 					piller->texture = pillarTexture;
 
@@ -73,8 +68,8 @@ Level::Level(const std::string& filename)
 					chest->visible = true;
 					chest->vx = 0.0f;
 					chest->vy = 0.0f;
-					chest->x = x;
-					chest->y = y;
+					chest->x = static_cast<float>(x);
+					chest->y = static_cast<float>(y);
 					chest->solid = false;
 					chest->texture = chestTexture;
 

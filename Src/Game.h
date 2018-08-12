@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "Physics.h"
 #include "AssetLoader.h"
+#include "AudioSystem.h"
 
 class Game
 {
@@ -24,9 +25,12 @@ private:
 	Physics* m_physics;
 	AssetLoader m_assetLoader;
 	Level* m_level;
-	
+	AudioSystem m_audio;
+		
 	void update(float deltaTime);
 	void fixedUpdate(float deltaTime);
 	float m_coolDown = 0.0f;
 	const float m_ShootcoolDown = 3.0f;
+
+	SoundClip* m_pickupSound;
 };

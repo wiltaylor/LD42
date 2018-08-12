@@ -1,6 +1,7 @@
 #pragma once
 #include "SDL.h"
 #include <vector>
+#include "SoundClip.h"
 
 struct Texture
 {
@@ -26,10 +27,13 @@ public:
 		}
 	}
 
-	void loadTexture(const std::string& filename, const std::string name);
+	void loadTexture(const std::string& filename, const std::string& name);
+	void loadSoundClip(const std::string& filename, const std::string& name);
 	int getTextureId(const std::string& name);
+	SoundClip* getSoundClip(const std::string& name);
 	Texture* getTexture(const int id);
 
 private:
 	std::vector<Texture*> m_textures;
+	std::vector<SoundClip*> m_sounds;
 };

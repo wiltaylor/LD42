@@ -88,7 +88,10 @@ void Physics::useInFront() const
 
 	if (block->door)
 	{
-		block->open = true;
-		block->passable = true;
+		if (m_player->hasKey(block->lock))
+		{
+			block->open = true;
+			block->passable = true;
+		}
 	}
 }

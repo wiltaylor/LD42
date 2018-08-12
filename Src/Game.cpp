@@ -12,7 +12,17 @@ Game::Game()
 	m_assetLoader.loadTexture("MagicBolt.png", "magicbolt");
 	m_assetLoader.loadTexture("hellblob.png", "hellblob");
 	m_assetLoader.loadTexture("door.png", "door");
+	m_assetLoader.loadTexture("reddoor.png", "reddoor");
+	m_assetLoader.loadTexture("greendoor.png", "greendoor");
+	m_assetLoader.loadTexture("bluedoor.png", "bluedoor");
+	m_assetLoader.loadTexture("golddoor.png", "golddoor");
+	m_assetLoader.loadTexture("redkey.png", "redkey");
+	m_assetLoader.loadTexture("greenkey.png", "greenkey");
+	m_assetLoader.loadTexture("bluekey.png", "bluekey");
+	m_assetLoader.loadTexture("goldkey.png", "goldkey");
 
+	m_assetLoader.loadSoundClip("pickup.wav", "pickup");
+	
 	m_renderer = new Renderer(640, 480);
 	m_rayCastRenderer = new RayCastRenderer(m_renderer, &m_assetLoader, &m_player);
 }
@@ -24,12 +34,19 @@ Game::~Game()
 
 void Game::start()
 {
+	//turn back on before release
+	//m_audio.PlayMusic("bgmuisc.mp3");
+	//m_audio.SetMusicVolumn(1);
+
+	m_pickupSound = m_assetLoader.getSoundClip("pickup");
+
+
 	m_level = new Level("level1.txt", &m_assetLoader, &m_player);
 	m_physics = new Physics(m_level, &m_player);
 
 	m_rayCastRenderer->setMapData(m_level, m_level->getWidth(), m_level->getHeight());
 	
-	float timeStep = 0.5f;
+	float timeStep = 0.1f;
 	float currentStep = 0;
 
 	auto tp1 = std::chrono::system_clock::now();
@@ -93,7 +110,10 @@ void Game::update(float deltaTime)
 			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
-				m_physics->getLastHitObject()->OnPlayerTouch();
+			{
+				m_physics->getLastHitObject()->OnPlayerTouch(&m_player);
+				m_pickupSound->play();
+			}
 		}
 	}
 
@@ -111,7 +131,10 @@ void Game::update(float deltaTime)
 			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
-				m_physics->getLastHitObject()->OnPlayerTouch();
+			{
+				m_physics->getLastHitObject()->OnPlayerTouch(&m_player);
+				m_pickupSound->play();
+			}
 		}
 	}
 
@@ -130,7 +153,10 @@ void Game::update(float deltaTime)
 			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
-				m_physics->getLastHitObject()->OnPlayerTouch();
+			{
+				m_physics->getLastHitObject()->OnPlayerTouch(&m_player);
+				m_pickupSound->play();
+			}
 		}
 	}
 
@@ -148,7 +174,10 @@ void Game::update(float deltaTime)
 			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
-				m_physics->getLastHitObject()->OnPlayerTouch();
+			{
+				m_physics->getLastHitObject()->OnPlayerTouch(&m_player);
+				m_pickupSound->play();
+			}
 		}
 	}
 

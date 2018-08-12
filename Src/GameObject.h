@@ -1,6 +1,7 @@
 #pragma once
 #include "AssetLoader.h"
 #include <glm/vec2.hpp>
+#include "Player.h"
 
 class GameObject
 {
@@ -16,7 +17,7 @@ public:
 	bool projectile;
 	bool playerOwned;
 
-	virtual void OnPlayerTouch(){}
+	virtual void OnPlayerTouch(Player* player){}
 	virtual void OnUpdate(const float deltaTime){}
 
 	void setPosition(const glm::vec2& position) { m_position = position; }

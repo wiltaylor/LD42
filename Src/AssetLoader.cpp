@@ -1,6 +1,8 @@
 #include "AssetLoader.h"
 #include <SDL_image.h>
 #include <SDL.h>
+#include "AudioSystem.h"
+#include "SoundClip.h"
 
 Uint32 Texture::sampleColour(const float x, const float y) const
 {
@@ -13,7 +15,7 @@ Uint32 Texture::sampleColour(const float x, const float y) const
 	return data[sy * height + sx];
 }
 
-void AssetLoader::loadTexture(const std::string& filename, const std::string name)
+void AssetLoader::loadTexture(const std::string& filename, const std::string& name)
 {
 	const auto result = new Texture;
 	result->name = name;
@@ -24,16 +26,16 @@ void AssetLoader::loadTexture(const std::string& filename, const std::string nam
 
 	SDL_LockSurface(surface);
 
-	int dataSize = surface->w * surface->h;
+	const int dataSize = surface->w * surface->h;
 
 	result->data = new Uint32[dataSize];
 
 	auto out = SDL_GetPixelFormatName(surface->format->format);
 
-	if (surface->format->format == SDL_PIXELFORMAT_ABGR8888)
+	if (surface->format->format == SDL_PIXELFORMAT_ARGB8888)
 		memcpy_s(result->data, dataSize * sizeof(Uint32), surface->pixels, dataSize * sizeof(Uint32));
 	else
-		SDL_ConvertPixels(surface->w, surface->h, surface->format->format, surface->pixels, surface->pitch, SDL_PIXELFORMAT_ARGB8888, result->data, surface->w * 4);
+		SDL_ConvertPixels(surface->w, surface->h, surface->format->format, surface->pixels, surface->pitch, SDL_PIXELFORMAT_ABGR8888, result->data, surface->w * 4);
 
 	SDL_UnlockSurface(surface);
 	SDL_FreeSurface(surface);
@@ -56,3 +58,18 @@ Texture* AssetLoader::getTexture(const int id)
 {
 	return m_textures[id];
 }
+
+void AssetLoader::loadSoundClip(const std::string& filename, const std::string& name)
+{
+	m_sounds.push_back(new SoundClip(filename, name));
+}
+
+SoundClip* AssetLoader::getSoundClip(const std::string& name)
+{
+	for (auto &clip : m_sounds)
+		if (clip->getName() == name)
+			return clip;
+
+	return nullptr;
+}
+

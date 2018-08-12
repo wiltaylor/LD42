@@ -16,6 +16,14 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 	const auto doorTexture = assetLoader->getTextureId("door");
 	const auto wallTexture = assetLoader->getTextureId("wall");
 	const auto boltTexture = assetLoader->getTextureId("magicbolt");
+	const auto redkeyTexture = assetLoader->getTextureId("redkey");
+	const auto redDoorTexture = assetLoader->getTextureId("reddoor");
+	const auto greenkeyTexture = assetLoader->getTextureId("greenkey");
+	const auto greenDoorTexture = assetLoader->getTextureId("greendoor");
+	const auto bluekeyTexture = assetLoader->getTextureId("bluekey");
+	const auto blueDoorTexture = assetLoader->getTextureId("bluedoor");
+	const auto goldkeyTexture = assetLoader->getTextureId("goldkey");
+	const auto goldDoorTexture = assetLoader->getTextureId("golddoor");
 
 	m_player = player;
 
@@ -29,6 +37,7 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 		projectile->texture = boltTexture;
 		projectile->visible = true;
 		projectile->projectile = true;
+		projectile->physicsObject = true;
 
 		m_gameObjects.push_back(projectile);
 	}
@@ -98,6 +107,74 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 					m_levelBlocks[index].textureIndex = 0;
 				}
 					break;
+				case 'r':
+				{
+					auto key = new PickUp();
+
+					key->visible = true;
+					key->setVelocity({ 0.0f, 0.0f });
+					key->setPosition({ static_cast<float>(x), static_cast<float>(y) });
+					key->solid = false;
+					key->texture = redkeyTexture;
+					key->Key = DOORLOCK_RED;
+
+					m_gameObjects.push_back(key);
+
+					m_levelBlocks[index].passable = true;
+					m_levelBlocks[index].textureIndex = 0;
+					break;
+				}
+				case 'g':
+				{
+					auto key = new PickUp();
+
+					key->visible = true;
+					key->setVelocity({ 0.0f, 0.0f });
+					key->setPosition({ static_cast<float>(x), static_cast<float>(y) });
+					key->solid = false;
+					key->texture = greenkeyTexture;
+					key->Key = DOORLOCK_GREEN;
+
+					m_gameObjects.push_back(key);
+
+					m_levelBlocks[index].passable = true;
+					m_levelBlocks[index].textureIndex = 0;
+					break;
+				}
+				case 'b':
+				{
+					auto key = new PickUp();
+
+					key->visible = true;
+					key->setVelocity({ 0.0f, 0.0f });
+					key->setPosition({ static_cast<float>(x), static_cast<float>(y) });
+					key->solid = false;
+					key->texture = bluekeyTexture;
+					key->Key = DOORLOCK_BLUE;
+
+					m_gameObjects.push_back(key);
+
+					m_levelBlocks[index].passable = true;
+					m_levelBlocks[index].textureIndex = 0;
+					break;
+				}
+				case 'o':
+				{
+					auto key = new PickUp();
+
+					key->visible = true;
+					key->setVelocity({ 0.0f, 0.0f });
+					key->setPosition({ static_cast<float>(x), static_cast<float>(y) });
+					key->solid = false;
+					key->texture = goldkeyTexture;
+					key->Key = DOORLOCK_GOLD;
+
+					m_gameObjects.push_back(key);
+
+					m_levelBlocks[index].passable = true;
+					m_levelBlocks[index].textureIndex = 0;
+					break;
+				}
 				case 't':
 				{
 					auto chest = new PickUp();
@@ -118,6 +195,30 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 					m_levelBlocks[index].passable = false;
 					m_levelBlocks[index].textureIndex = doorTexture;
 					m_levelBlocks[index].door = true;
+					break;
+				case 'R':
+					m_levelBlocks[index].passable = false;
+					m_levelBlocks[index].textureIndex = redDoorTexture;
+					m_levelBlocks[index].door = true;
+					m_levelBlocks[index].lock = DOORLOCK_RED;
+					break;
+				case 'G':
+					m_levelBlocks[index].passable = false;
+					m_levelBlocks[index].textureIndex = greenDoorTexture;
+					m_levelBlocks[index].door = true;
+					m_levelBlocks[index].lock = DOORLOCK_GREEN;
+					break;
+				case 'B':
+					m_levelBlocks[index].passable = false;
+					m_levelBlocks[index].textureIndex = blueDoorTexture;
+					m_levelBlocks[index].door = true;
+					m_levelBlocks[index].lock = DOORLOCK_BLUE;
+					break;
+				case 'O':
+					m_levelBlocks[index].passable = false;
+					m_levelBlocks[index].textureIndex = goldDoorTexture;
+					m_levelBlocks[index].door = true;
+					m_levelBlocks[index].lock = DOORLOCK_GOLD;
 					break;
                 case 'p':
 					m_player->setPosition({ x, y });

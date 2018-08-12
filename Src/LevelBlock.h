@@ -12,6 +12,7 @@ typedef enum
 
 struct LevelBlock
 {
+	char icon;
 	bool passable;
 	int textureIndex;
 	bool open = false;

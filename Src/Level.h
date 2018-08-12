@@ -1,14 +1,16 @@
 #pragma once
-#include <string>
 #include "LevelBlock.h"
 #include "GameObject.h"
 #include <vector>
 #include "Player.h"
+#include "HudRenderer.h"
+
+class Physics;
 
 class Level
 {
 public:
-	explicit Level(AssetLoader* assetLoader, Player* player) :m_assetLoader{ assetLoader }, m_player { player } {}
+	explicit Level(AssetLoader* assetLoader, Player* player, HUDRenderer* hudRender, Physics* physics) :m_assetLoader{ assetLoader }, m_player{ player }, m_hudRenderer{ hudRender }, m_physics{ physics }  {}
     ~Level();
 
 
@@ -38,9 +40,11 @@ private:
     int m_height;
 	Player* m_player;
 	AssetLoader* m_assetLoader;
+	HUDRenderer* m_hudRenderer;
 
     LevelBlock* m_levelBlocks = nullptr;
 	std::vector<GameObject*> m_gameObjects;
+	Physics* m_physics;
 
 
 	const int m_MaxProjectiles = 20;

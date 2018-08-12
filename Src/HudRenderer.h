@@ -12,7 +12,8 @@ public:
 	void update(float deltaTime);
 	void attack();
 	void hideLogo() {m_showingLogo = false;}
-	bool showingLogo() const { return m_showingLogo; }
+	bool showingLogo() const { return m_showingLogo || m_showEnding; }
+	void showEnd() { m_showEnding = true; }
 
 private:
 	Renderer* m_renderer;
@@ -30,12 +31,14 @@ private:
 	SDL_Texture* m_gameOverSubText;
 	SDL_Texture* m_deathColour;
 	SDL_Texture* m_logo;
+	SDL_Texture* m_endScreen;
 
 	Player* m_player;
 
 	int m_lastHP = 0;
 	float m_attackCooldown = 0.0f;
 	bool m_showingLogo = true;
+	bool m_showEnding = false;
 
 	SDL_Texture* loadTexture(const std::string& filename);
 

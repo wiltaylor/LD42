@@ -31,7 +31,7 @@ private:
 	void update(float deltaTime);
 	void fixedUpdate(float deltaTime);
 	float m_coolDown = 0.0f;
-	const float m_ShootcoolDown = 3.0f;
+	const float m_ShootcoolDown = 1.0f;
 
 	SoundClip* m_pickupSound;
 };

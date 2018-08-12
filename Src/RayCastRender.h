@@ -39,7 +39,7 @@ private:
 
 	Player* m_player;
 
-	const float m_fov = 1.20f; //3.14159f / 5.0f;
+	const float m_fov = 3.14159f / 4.0f;
 	const float m_maxDistance = 16.0f;
 	const float m_stepSize = 0.01f;
 

@@ -45,4 +45,5 @@ void Player::reset()
 	m_goldKey = false;
 	m_greenKey = false;
 	m_hp = 100.0f;
+	m_angle = 0;
 }

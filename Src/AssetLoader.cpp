@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include "AudioSystem.h"
 #include "SoundClip.h"
+#include <assert.h>  
 
 Uint32 Texture::sampleColour(const float x, const float y) const
 {
@@ -56,6 +57,9 @@ int AssetLoader::getTextureId(const std::string& name)
 
 Texture* AssetLoader::getTexture(const int id)
 {
+	assert(id >= 0, "Id of texture is to small!");
+	assert(id  m_textures.size(), "Id of texture is over the bounds of the array!");
+
 	return m_textures[id];
 }
 

@@ -15,7 +15,7 @@ HUDRenderer::HUDRenderer(Renderer* render, Player* player) : m_renderer{render},
 	m_staffattack = loadTexture("staff_attack.png");
 	m_deathColour = loadTexture("deathcolour.png");
 	m_logo = loadTexture("logo.png");
-	
+	m_endScreen = loadTexture("endscreen.png");
 
 	m_gameOver = m_renderer->getTextFromText("Game Over!", { 255,255,255,0});
 	m_gameOverSubText = m_renderer->getTextFromText("Press space to restart", { 255,255,255,0 });
@@ -25,22 +25,28 @@ HUDRenderer::HUDRenderer(Renderer* render, Player* player) : m_renderer{render},
 
 void HUDRenderer::draw() const
 {
-	if (!m_showingLogo)
+	if(m_showEnding)
 	{
-		m_renderer->drawTexture(m_texture);
-		m_renderer->drawTexture(m_currentWizard, m_renderer->getScreenWidth() / 2 - 32, m_renderer->getScreenHeight() - 75, 64, 64);
-		m_renderer->drawTexture(m_hpTexture, m_renderer->getScreenWidth() / 2 - 16, m_renderer->getScreenHeight() - 110, 32, 32);
-		m_renderer->drawTexture(m_activestaff, m_renderer->getScreenWidth() / 2 - 128, m_renderer->getScreenHeight() - 235, 256, 128);
+		m_renderer->drawTexture(m_endScreen);
+		return;
+	}
 
-		if (m_player->getHp() <= 0)
-		{
-			m_renderer->drawTexture(m_deathColour);
-			m_renderer->drawTexture(m_gameOver, m_renderer->getScreenWidth() / 2 - 128, m_renderer->getScreenHeight() / 2 - 64, 256, 128);
-			m_renderer->drawTexture(m_gameOverSubText, m_renderer->getScreenWidth() / 2 - 256, m_renderer->getScreenHeight() / 2 + 64, 512, 64);
-		}
-	}else
+	if(m_showingLogo)
 	{
-		m_renderer->drawTexture(m_logo);	
+		m_renderer->drawTexture(m_logo);
+		return;
+	}
+
+	m_renderer->drawTexture(m_texture);
+	m_renderer->drawTexture(m_currentWizard, m_renderer->getScreenWidth() / 2 - 32, m_renderer->getScreenHeight() - 75, 64, 64);
+	m_renderer->drawTexture(m_hpTexture, m_renderer->getScreenWidth() / 2 - 16, m_renderer->getScreenHeight() - 110, 32, 32);
+	m_renderer->drawTexture(m_activestaff, m_renderer->getScreenWidth() / 2 - 128, m_renderer->getScreenHeight() - 235, 256, 128);
+
+	if (m_player->getHp() <= 0)
+	{
+		m_renderer->drawTexture(m_deathColour);
+		m_renderer->drawTexture(m_gameOver, m_renderer->getScreenWidth() / 2 - 128, m_renderer->getScreenHeight() / 2 - 64, 256, 128);
+		m_renderer->drawTexture(m_gameOverSubText, m_renderer->getScreenWidth() / 2 - 256, m_renderer->getScreenHeight() / 2 + 64, 512, 64);
 	}
 }
 

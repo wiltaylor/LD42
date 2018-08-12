@@ -27,8 +27,20 @@ Game::Game()
 	m_assetLoader.loadTexture("bluekey.png", "bluekey");
 	m_assetLoader.loadTexture("goldkey.png", "goldkey");
 	m_assetLoader.loadTexture("portal.png", "portal");
+	m_assetLoader.loadTexture("portal.png", "endportal");
+	m_assetLoader.loadTexture("skellington1.png", "skellington1");
+	m_assetLoader.loadTexture("skellington2.png", "skellington2");
+	m_assetLoader.loadTexture("skellington3.png", "skellington3");
+	m_assetLoader.loadTexture("skellingtondeath1.png", "skellingtondeath1");
+	m_assetLoader.loadTexture("skellingtondeath2.png", "skellingtondeath2");
 
 	m_assetLoader.loadSoundClip("pickup.wav", "pickup");
+	m_assetLoader.loadSoundClip("fire.ogg", "fire");
+	m_assetLoader.loadSoundClip("door.ogg", "door");
+	m_assetLoader.loadSoundClip("door_rejected.wav", "doorreject");
+	m_assetLoader.loadSoundClip("portal.ogg", "portal");
+	m_assetLoader.loadSoundClip("enemysee.ogg", "enemysee");
+
 }
 
 Game::~Game()
@@ -44,10 +56,11 @@ void Game::start()
 
 	m_pickupSound = m_assetLoader.getSoundClip("pickup");
 
-
-	m_level = new Level(&m_assetLoader, &m_player);
+	m_physics = new Physics(&m_player, &m_assetLoader);
+	m_level = new Level(&m_assetLoader, &m_player, m_hudRenderer, m_physics);
+	m_physics->setLevel(m_level);
 	m_level->loadLevel(1);
-	m_physics = new Physics(m_level, &m_player);
+	
 
 	m_rayCastRenderer->setMapData(m_level, m_level->getWidth(), m_level->getHeight());
 	
@@ -100,10 +113,10 @@ void Game::update(float deltaTime)
 		m_running = false;
 
 	if(m_input.keyDown(SDL_SCANCODE_A) && !m_hudRenderer->showingLogo())
-		m_player.setAngle(m_player.getAngle() - 0.8f * deltaTime);
+		m_player.setAngle(m_player.getAngle() - 0.9f * deltaTime);
 
 	if (m_input.keyDown(SDL_SCANCODE_D) && !m_hudRenderer->showingLogo())
-		m_player.setAngle(m_player.getAngle() + 0.8f * deltaTime);
+		m_player.setAngle(m_player.getAngle() + 0.9f * deltaTime);
 
 	if(m_input.keyDown(SDL_SCANCODE_W) && m_player.getHp() > 0 && !m_hudRenderer->showingLogo())
 	{
@@ -223,11 +236,13 @@ void Game::update(float deltaTime)
 			fireball->visible = true;
 			fireball->cleanUp = false;
 			fireball->playerOwned = true;
-			fireball->setVelocity({ sinf(m_player.getAngle()) * 4.0f, cosf(m_player.getAngle()) * 4.0f });
+			fireball->setVelocity({ sinf(m_player.getAngle()) * 10.0f, cosf(m_player.getAngle()) * 10.0f });
 			fireball->setPosition(m_player.getPosition());
 			
 			m_coolDown = m_ShootcoolDown;
 			m_hudRenderer->attack();
+
+			m_assetLoader.getSoundClip("fire")->play();
 		}
 	}
 

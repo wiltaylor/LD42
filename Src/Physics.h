@@ -1,7 +1,7 @@
 #pragma once
-#include "Level.h"
 #include "GameObject.h"
-#include <glm/glm.hpp>
+#include "AssetLoader.h"
+#include "Level.h"
 
 typedef enum {
 	HIT_NOTHING,
@@ -13,13 +13,16 @@ typedef enum {
 class Physics
 {
 public:
-	Physics(Level* level, Player* player) : m_level{ level }, m_player { player } {}
+	Physics(Player* player, AssetLoader* assetLoader) : m_player{ player }, m_assetLoader{ assetLoader } {}
 	~Physics() = default;
+
+	void setLevel(Level* level) { m_level = level; }
 
 	HITTYPE testPosition(glm::vec2 position);
 	HITTYPE testPosition(glm::vec2 position, bool skipPlayer, GameObject* self);
 	HITTYPE testPosition(glm::vec2 position, bool skipPlayer, GameObject* self, bool projectile);
 	HITTYPE testProjectile(glm::vec2 position, bool skipPlayer, GameObject* self);
+	bool checkLineOfSite(glm::vec2 origin, glm::vec2 dest);
 
 	void update(float deltaTime);
 	void useInFront() const;
@@ -30,6 +33,8 @@ private:
 	Level* m_level;
 	Player* m_player;
 	GameObject* m_lastHitObject;
-	const float m_tolerance = 0.1f;
+	const float m_tolerance = 0.3f;
+	AssetLoader* m_assetLoader;
+	float m_stepAmmount = 0.5f;
 
 };

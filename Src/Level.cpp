@@ -35,6 +35,7 @@ void Level::loadLevel(int level)
 	const auto goldkeyTexture = m_assetLoader->getTextureId("goldkey");
 	const auto goldDoorTexture = m_assetLoader->getTextureId("golddoor");
 	const auto portalTexture = m_assetLoader->getTextureId("portal");
+	const auto endPortalTexture = m_assetLoader->getTextureId("endportal");
 
 
 	for (int i = 0; i < m_MaxProjectiles; i++)
@@ -78,6 +79,8 @@ void Level::loadLevel(int level)
 			const int index = y * m_width + x;
 			auto line = levelData[y];
 
+			m_levelBlocks[index].icon = line[x];
+
 			switch (line[x])
 			{
 			case '#':
@@ -102,7 +105,7 @@ void Level::loadLevel(int level)
 			break;
 			case 'h':
 			{
-				auto hellblob = new NPC(m_player);
+				auto hellblob = new NPC(m_player, m_assetLoader, m_physics);
 
 				hellblob->visible = true;
 				hellblob->setVelocity({ 0.0f, 0.0f });
@@ -112,8 +115,35 @@ void Level::loadLevel(int level)
 				hellblob->physicsObject = true;
 				hellblob->projectile = false;
 				hellblob->dmg = 1.0f;
+				hellblob->addFrame(hellBlobTexture);
 
 				m_gameObjects.push_back(hellblob);
+
+				m_levelBlocks[index].passable = true;
+				m_levelBlocks[index].textureIndex = 0;
+			}
+			break;
+
+			case 's':
+			{
+				auto skellington = new NPC(m_player, m_assetLoader, m_physics);
+
+				skellington->visible = true;
+				skellington->setVelocity({ 0.0f, 0.0f });
+				skellington->setPosition({ static_cast<float>(x), static_cast<float>(y) });
+				skellington->solid = false;
+				skellington->texture = 0;
+				skellington->physicsObject = true;
+				skellington->projectile = false;
+				skellington->dmg = 1.0f;
+				//skellington->addFrame(m_assetLoader->getTextureId("skellington1"));
+				skellington->addFrame(m_assetLoader->getTextureId("skellington2"));
+				skellington->addFrame(m_assetLoader->getTextureId("skellington3"));
+				skellington->addDeathFrame(m_assetLoader->getTextureId("skellingtondeath1"));
+				skellington->addDeathFrame(m_assetLoader->getTextureId("skellingtondeath2"));
+				skellington->setSightSound("enemysee");
+
+				m_gameObjects.push_back(skellington);
 
 				m_levelBlocks[index].passable = true;
 				m_levelBlocks[index].textureIndex = 0;
@@ -205,7 +235,7 @@ void Level::loadLevel(int level)
 			break;
 			case 'E':
 			{
-				auto portal = new Portal(this);
+				auto portal = new Portal(this, m_hudRenderer, m_assetLoader);
 
 				portal->visible = true;
 				portal->setVelocity({ 0.0f, 0.0f });
@@ -219,6 +249,23 @@ void Level::loadLevel(int level)
 				m_levelBlocks[index].textureIndex = 0;
 			}
 				break;
+			case '!':
+			{
+				auto portal = new Portal(this, m_hudRenderer, m_assetLoader);
+
+				portal->visible = true;
+				portal->setVelocity({ 0.0f, 0.0f });
+				portal->setPosition({ static_cast<float>(x), static_cast<float>(y) });
+				portal->solid = false;
+				portal->texture = endPortalTexture;
+				portal->setEndPortal();
+
+				m_gameObjects.push_back(portal);
+
+				m_levelBlocks[index].passable = true;
+				m_levelBlocks[index].textureIndex = 0;
+			}
+			break;
 			case 'D':
 				m_levelBlocks[index].passable = false;
 				m_levelBlocks[index].textureIndex = doorTexture;

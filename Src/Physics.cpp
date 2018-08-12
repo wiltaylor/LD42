@@ -1,4 +1,5 @@
 #include "Physics.h"
+#include <glm/glm.hpp>
 
 HITTYPE Physics::testPosition(glm::vec2 position)
 {
@@ -116,7 +117,7 @@ void Physics::update(float deltaTime)
 			}
 
 			obj->setVelocity({ 0,0 });
-
+			continue;
 		}
 
 		if (hit == HIT_OBJECT)
@@ -159,6 +160,34 @@ void Physics::useInFront() const
 		{
 			block->open = true;
 			block->passable = true;
+			m_assetLoader->getSoundClip("door")->play();
+		}else
+		{
+ 			m_assetLoader->getSoundClip("doorreject")->play();
+
 		}
 	}
 }
+
+bool Physics::checkLineOfSite(glm::vec2 origin, glm::vec2 dest)
+{
+	const auto diff = dest - origin;
+	auto distance = glm::length(diff);
+	const auto direction = glm::normalize(diff);
+
+	auto currentVec = origin;
+
+	while (distance > 0)
+	{
+
+		if (testPosition(currentVec) == HIT_WALL)
+			return false;
+
+		distance -= m_stepAmmount;
+
+		currentVec += direction * m_stepAmmount;
+	}
+
+	return true;
+}
+

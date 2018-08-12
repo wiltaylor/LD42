@@ -23,11 +23,15 @@ public:
 	void addFrame(int id) { m_frames.push_back(id); }
 	void addDeathFrame(int id) { m_deathFrames.push_back(id); }
 	void setSightSound(const std::string& sound) { m_sightSound = sound; }
+	void setDeathSound(const std::string& sound) { m_deathSound = sound; }
+	void setOnHitSound(const std::string& sound) { m_onHitSound = sound; }
 
 private:
 	bool m_isDead = false;
 	bool m_hasSeen = false;
 	std::string m_sightSound = "";
+	std::string m_deathSound = "";
+	std::string m_onHitSound = "";
 
 	NPCSTATE m_state = NPC_Idle;
 	Player* m_player;

@@ -136,12 +136,13 @@ void Level::loadLevel(int level)
 				skellington->physicsObject = true;
 				skellington->projectile = false;
 				skellington->dmg = 1.0f;
-				//skellington->addFrame(m_assetLoader->getTextureId("skellington1"));
 				skellington->addFrame(m_assetLoader->getTextureId("skellington2"));
 				skellington->addFrame(m_assetLoader->getTextureId("skellington3"));
 				skellington->addDeathFrame(m_assetLoader->getTextureId("skellingtondeath1"));
 				skellington->addDeathFrame(m_assetLoader->getTextureId("skellingtondeath2"));
 				skellington->setSightSound("enemysee");
+				skellington->setDeathSound("skellingtondeath");
+				skellington->setOnHitSound("hit");
 
 				m_gameObjects.push_back(skellington);
 

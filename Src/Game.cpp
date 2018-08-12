@@ -40,6 +40,9 @@ Game::Game()
 	m_assetLoader.loadSoundClip("door_rejected.wav", "doorreject");
 	m_assetLoader.loadSoundClip("portal.ogg", "portal");
 	m_assetLoader.loadSoundClip("enemysee.ogg", "enemysee");
+	m_assetLoader.loadSoundClip("skeletondeath.ogg", "skellingtondeath");
+	m_assetLoader.loadSoundClip("hit.ogg", "hit");
+	m_assetLoader.loadSoundClip("playerhit.ogg", "playerhit");
 
 }
 
@@ -113,10 +116,10 @@ void Game::update(float deltaTime)
 		m_running = false;
 
 	if(m_input.keyDown(SDL_SCANCODE_A) && !m_hudRenderer->showingLogo())
-		m_player.setAngle(m_player.getAngle() - 0.9f * deltaTime);
+		m_player.setAngle(m_player.getAngle() - 1.5f * deltaTime);
 
 	if (m_input.keyDown(SDL_SCANCODE_D) && !m_hudRenderer->showingLogo())
-		m_player.setAngle(m_player.getAngle() + 0.9f * deltaTime);
+		m_player.setAngle(m_player.getAngle() + 1.5f * deltaTime);
 
 	if(m_input.keyDown(SDL_SCANCODE_W) && m_player.getHp() > 0 && !m_hudRenderer->showingLogo())
 	{

@@ -134,6 +134,7 @@ void Physics::update(float deltaTime)
 		}
 		else if(hit == HIT_PLAYER)
 		{
+			m_assetLoader->getSoundClip("playerhit")->play();
 			m_player->doDamage(obj->dmg);
 		}
 		else

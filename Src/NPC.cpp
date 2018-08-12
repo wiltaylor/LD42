@@ -80,6 +80,10 @@ void NPC::onHitWithProjectile(float dmg)
 	{
 		m_isDead = true;
 		physicsObject = false;
+		m_assetLoader->getSoundClip(m_deathSound)->play();
+	}else
+	{
+		m_assetLoader->getSoundClip(m_onHitSound)->play();
 	}
 }
 

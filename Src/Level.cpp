@@ -13,8 +13,8 @@ void Level::loadLevel(int level)
 	m_currentLevel = level;
 	const auto filename = "level" + std::to_string(level) + ".txt";
 
-	for (auto &obj : m_gameObjects)
-		delete obj;
+//	for (auto &obj : m_gameObjects)
+//		delete obj;
 
 	m_gameObjects.clear();
 

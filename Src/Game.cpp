@@ -5,6 +5,12 @@
 
 Game::Game()
 {
+
+	
+	m_renderer = new Renderer(800, 600);
+	m_hudRenderer = new HUDRenderer(m_renderer, &m_player);
+	m_rayCastRenderer = new RayCastRenderer(m_renderer, &m_assetLoader, &m_player);
+
 	//Load game textures
 	m_assetLoader.loadTexture("wall.png", "wall");
 	m_assetLoader.loadTexture("pillar.png", "pillar");
@@ -23,10 +29,6 @@ Game::Game()
 	m_assetLoader.loadTexture("portal.png", "portal");
 
 	m_assetLoader.loadSoundClip("pickup.wav", "pickup");
-	
-	m_renderer = new Renderer(800, 600);
-	m_rayCastRenderer = new RayCastRenderer(m_renderer, &m_assetLoader, &m_player);
-	m_hudRenderer = new HUDRenderer(m_renderer, &m_player);
 }
 
 Game::~Game()
@@ -77,6 +79,10 @@ void Game::start()
 
 void Game::fixedUpdate(float deltaTime)
 {
+	//Player is dead;
+	if (m_player.getHp() <= 0 || m_hudRenderer->showingLogo())
+		return;
+
 	m_physics->update(deltaTime);
 	m_level->update(deltaTime);
 }
@@ -93,13 +99,13 @@ void Game::update(float deltaTime)
 	if (m_input.keyDown(SDL_SCANCODE_ESCAPE) || m_input.hasQuit())
 		m_running = false;
 
-	if(m_input.keyDown(SDL_SCANCODE_A))
+	if(m_input.keyDown(SDL_SCANCODE_A) && !m_hudRenderer->showingLogo())
 		m_player.setAngle(m_player.getAngle() - 0.8f * deltaTime);
 
-	if (m_input.keyDown(SDL_SCANCODE_D))
+	if (m_input.keyDown(SDL_SCANCODE_D) && !m_hudRenderer->showingLogo())
 		m_player.setAngle(m_player.getAngle() + 0.8f * deltaTime);
 
-	if(m_input.keyDown(SDL_SCANCODE_W))
+	if(m_input.keyDown(SDL_SCANCODE_W) && m_player.getHp() > 0 && !m_hudRenderer->showingLogo())
 	{
 		const auto pos = m_player.getPosition();
 		const glm::vec2 newPosition(
@@ -122,7 +128,7 @@ void Game::update(float deltaTime)
 		}
 	}
 
-	if (m_input.keyDown(SDL_SCANCODE_S))
+	if (m_input.keyDown(SDL_SCANCODE_S) && m_player.getHp() > 0 && !m_hudRenderer->showingLogo())
 	{
 		const auto pos = m_player.getPosition();
 		const glm::vec2 newPosition(
@@ -145,7 +151,7 @@ void Game::update(float deltaTime)
 		}
 	}
 
-	if(m_input.keyDown(SDL_SCANCODE_Q))
+	if(m_input.keyDown(SDL_SCANCODE_Q) && m_player.getHp() > 0 && !m_hudRenderer->showingLogo())
 	{
 		const auto pos = m_player.getPosition();
 		const glm::vec2 newPosition(
@@ -169,7 +175,7 @@ void Game::update(float deltaTime)
 		}
 	}
 
-	if (m_input.keyDown(SDL_SCANCODE_E))
+	if (m_input.keyDown(SDL_SCANCODE_E) && m_player.getHp() > 0 && !m_hudRenderer->showingLogo())
 	{
 		const auto pos = m_player.getPosition();
 		const glm::vec2 newPosition(
@@ -192,13 +198,23 @@ void Game::update(float deltaTime)
 		}
 	}
 
-	if(m_input.keyDown(SDL_SCANCODE_SPACE) && m_coolDown <= 0)
+	if(m_input.keyDown(SDL_SCANCODE_SPACE) && m_coolDown <= 0 && m_player.getHp() > 0 && !m_hudRenderer->showingLogo())
 	{
 		m_physics->useInFront();
 		m_coolDown = m_ShootcoolDown;
 	}
 
-	if((m_input.keyDown(SDL_SCANCODE_RCTRL) || m_input.keyDown(SDL_SCANCODE_LCTRL)) && m_coolDown <= 0)
+	if (m_input.keyDown(SDL_SCANCODE_SPACE) && m_hudRenderer->showingLogo())
+		m_hudRenderer->hideLogo();
+
+	if (m_input.keyDown(SDL_SCANCODE_SPACE) && m_player.getHp() <= 0)
+	{
+		m_player.reset();
+		m_level->loadLevel(m_level->getCurrentLevel());
+
+	}
+
+	if((m_input.keyDown(SDL_SCANCODE_RCTRL) || m_input.keyDown(SDL_SCANCODE_LCTRL)) && m_coolDown <= 0 && m_player.getHp() > 0 && !m_hudRenderer->showingLogo())
 	{		
 		auto fireball = m_level->getFreeProjectile();
 
@@ -211,13 +227,14 @@ void Game::update(float deltaTime)
 			fireball->setPosition(m_player.getPosition());
 			
 			m_coolDown = m_ShootcoolDown;
+			m_hudRenderer->attack();
 		}
 	}
 
 	m_rayCastRenderer->Draw();
 	m_rayCastRenderer->drawObjects();
 	m_renderer->flipPixels();
-	m_hudRenderer->update();
+	m_hudRenderer->update(deltaTime);
 	m_hudRenderer->draw();
 	m_renderer->flip();
 }

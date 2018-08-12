@@ -19,6 +19,7 @@ public:
 	bool hasKey(LockLevel key);
 	void doDamage(float ammount) { m_hp -= ammount; }
 	float getHp() const {return m_hp;}
+	void reset();
 
 private:
 	float m_angle = 0;

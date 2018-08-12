@@ -36,3 +36,13 @@ void Player::pickupKey(LockLevel key)
 	default: ;
 	}
 }
+
+
+void Player::reset()
+{
+	m_redKey = false;
+	m_blueKey = false;
+	m_goldKey = false;
+	m_greenKey = false;
+	m_hp = 100.0f;
+}

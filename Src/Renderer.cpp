@@ -3,13 +3,13 @@
 Renderer::Renderer(const int width, const int height) : m_screenWidth{width}, m_screenHeight{height}
 {
 
-	SDL_CreateWindowAndRenderer(width, height, 0, &m_window, &m_renderer);
+	SDL_CreateWindowAndRenderer(width, height,/* SDL_WINDOW_FULLSCREEN*/0, &m_window, &m_renderer);
 	TTF_Init();
 
 	m_pixelbufferTexture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, width, height);
 	m_pixelBuffer = new Uint32[width * height];
 
-	m_font = TTF_OpenFont("c:\\windows\\fonts\\Arial.ttf", 12);
+	m_font = TTF_OpenFont(R"(c:\windows\fonts\Arial.ttf)", 12);
 
 	if(!m_font)
 	{

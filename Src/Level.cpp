@@ -38,6 +38,7 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 		projectile->visible = true;
 		projectile->projectile = true;
 		projectile->physicsObject = true;
+		projectile->dmg = 1;
 
 		m_gameObjects.push_back(projectile);
 	}
@@ -100,6 +101,7 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 					hellblob->texture = hellBlobTexture;
 					hellblob->physicsObject = true;
 					hellblob->projectile = false;
+					hellblob->dmg = 1.0f;
 
 					m_gameObjects.push_back(hellblob);
 
@@ -282,5 +284,5 @@ void Level::update(const float deltaTime)
 	});
 
 	for (auto &o : m_gameObjects)
-		o->OnUpdate(deltaTime);
+		o->onUpdate(deltaTime);
 }

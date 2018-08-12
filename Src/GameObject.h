@@ -3,10 +3,17 @@
 #include <glm/vec2.hpp>
 #include "Player.h"
 
+typedef enum
+{
+	OBJECT_NPC,
+	OBJECT_PICKUP,
+	OBJECT_PROJECTILE
+}GAMEOBJECT_TYPE;
+
 class GameObject
 {
 public:
-	GameObject() = default;
+	GameObject(): type{OBJECT_NPC} {}
 	virtual ~GameObject() = default;
 
 	bool visible;
@@ -16,9 +23,12 @@ public:
 	bool cleanUp;
 	bool projectile;
 	bool playerOwned;
+	float dmg = 0.0f;
+	GAMEOBJECT_TYPE type;
 
-	virtual void OnPlayerTouch(Player* player){}
-	virtual void OnUpdate(const float deltaTime){}
+	virtual void onPlayerTouch(Player* player){}
+	virtual void onUpdate(const float deltaTime){}
+	virtual void onHitWithProjectile(float dmg) {}
 
 	void setPosition(const glm::vec2& position) { m_position = position; }
 	void setVelocity (const glm::vec2& velocity) { m_velocity = velocity; }

@@ -3,10 +3,10 @@
 #include "RayCastRender.h"
 #include "Player.h"
 #include "Input.h"
-#include "GameObject.h"
 #include "Physics.h"
 #include "AssetLoader.h"
 #include "AudioSystem.h"
+#include "HudRenderer.h"
 
 class Game
 {
@@ -19,6 +19,7 @@ public:
 private:
 	bool m_running = true;
 	Renderer* m_renderer;
+	HUDRenderer* m_hudRenderer;
 	RayCastRenderer* m_rayCastRenderer;
 	Player m_player;
 	Input m_input;

@@ -17,6 +17,8 @@ public:
 
 	void pickupKey(LockLevel key);
 	bool hasKey(LockLevel key);
+	void doDamage(float ammount) { m_hp -= ammount; }
+	float getHp() const {return m_hp;}
 
 private:
 	float m_angle = 0;
@@ -25,4 +27,5 @@ private:
 	bool m_greenKey;
 	bool m_blueKey;
 	bool m_goldKey;
+	float m_hp = 100.0f;
 };

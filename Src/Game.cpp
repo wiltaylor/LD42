@@ -23,8 +23,9 @@ Game::Game()
 
 	m_assetLoader.loadSoundClip("pickup.wav", "pickup");
 	
-	m_renderer = new Renderer(640, 480);
+	m_renderer = new Renderer(800, 600);
 	m_rayCastRenderer = new RayCastRenderer(m_renderer, &m_assetLoader, &m_player);
+	m_hudRenderer = new HUDRenderer(m_renderer, &m_player);
 }
 
 Game::~Game()
@@ -67,7 +68,7 @@ void Game::start()
 			currentStep -= timeStep;
 		}
 
-		m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getAngle()) + "Pos: " + std::to_string(m_player.getPosition().x) + "/" + std::to_string(m_player.getPosition().y));
+		m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getAngle()) + "Pos: " + std::to_string(m_player.getPosition().x) + "/" + std::to_string(m_player.getPosition().y) + "cooldown: " + std::to_string(m_coolDown));
 		update(ElapsedTime);
 	}
 }
@@ -105,14 +106,16 @@ void Game::update(float deltaTime)
 				pos.y + cosf(m_player.getAngle()) * 5.0f * deltaTime 
 			});	
 	
-		if (m_physics->testPosition(newPosition, true) == HIT_NOTHING)
+		if (m_physics->testPosition(newPosition, true, nullptr) == HIT_NOTHING)
 		{
 			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
 			{
-				m_physics->getLastHitObject()->OnPlayerTouch(&m_player);
-				m_pickupSound->play();
+				m_physics->getLastHitObject()->onPlayerTouch(&m_player);
+
+				if (m_physics->getLastHitObject()->type == OBJECT_PICKUP)
+					m_pickupSound->play();
 			}
 		}
 	}
@@ -126,14 +129,16 @@ void Game::update(float deltaTime)
 				pos.y - cosf(m_player.getAngle()) * 5.0f * deltaTime
 			});
 
-		if (m_physics->testPosition(newPosition, true) == HIT_NOTHING)
+		if (m_physics->testPosition(newPosition, true, nullptr) == HIT_NOTHING)
 		{
 			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
 			{
-				m_physics->getLastHitObject()->OnPlayerTouch(&m_player);
-				m_pickupSound->play();
+				m_physics->getLastHitObject()->onPlayerTouch(&m_player);
+
+				if (m_physics->getLastHitObject()->type == OBJECT_PICKUP)
+					m_pickupSound->play();
 			}
 		}
 	}
@@ -148,14 +153,16 @@ void Game::update(float deltaTime)
 			});
 
 
-		if (m_physics->testPosition(newPosition, true) == HIT_NOTHING)
+		if (m_physics->testPosition(newPosition, true, nullptr) == HIT_NOTHING)
 		{
 			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
 			{
-				m_physics->getLastHitObject()->OnPlayerTouch(&m_player);
-				m_pickupSound->play();
+				m_physics->getLastHitObject()->onPlayerTouch(&m_player);
+
+				if (m_physics->getLastHitObject()->type == OBJECT_PICKUP)
+					m_pickupSound->play();
 			}
 		}
 	}
@@ -169,14 +176,16 @@ void Game::update(float deltaTime)
 				pos.y - sinf(m_player.getAngle()) * 5.0f * deltaTime
 			});
 
-		if (m_physics->testPosition(newPosition, true) == HIT_NOTHING)
+		if (m_physics->testPosition(newPosition, true, nullptr) == HIT_NOTHING)
 		{
 			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
 			{
-				m_physics->getLastHitObject()->OnPlayerTouch(&m_player);
-				m_pickupSound->play();
+				m_physics->getLastHitObject()->onPlayerTouch(&m_player);
+
+				if(m_physics->getLastHitObject()->type == OBJECT_PICKUP)
+					m_pickupSound->play();
 			}
 		}
 	}
@@ -193,6 +202,7 @@ void Game::update(float deltaTime)
 
 		if(fireball != nullptr)
 		{
+			fireball->visible = true;
 			fireball->cleanUp = false;
 			fireball->playerOwned = true;
 			fireball->setVelocity({ sinf(m_player.getAngle()) * 4.0f, cosf(m_player.getAngle()) * 4.0f });
@@ -204,6 +214,9 @@ void Game::update(float deltaTime)
 
 	m_rayCastRenderer->Draw();
 	m_rayCastRenderer->drawObjects();
+	m_renderer->flipPixels();
+	m_hudRenderer->update();
+	m_hudRenderer->draw();
 	m_renderer->flip();
 }
 

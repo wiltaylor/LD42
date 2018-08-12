@@ -11,9 +11,13 @@ typedef enum
 class NPC : public GameObject
 {
 public:
-	NPC(Player* player) : m_player{player} {}
+	NPC(Player* player) : m_player{ player }
+	{
+		type = OBJECT_NPC;
+	}
 
-	void OnUpdate(const float deltaTime) override;
+	void onUpdate(const float deltaTime) override;
+	void onHitWithProjectile(float dmg) override;
 
 private:
 
@@ -23,5 +27,5 @@ private:
 
 	const float m_maxDistance = 16.0f;
 	const float m_maxSpeed = 0.5f;
-	const float m_tollerance = 0.1f;
+	float m_hp = 1.0f;
 };

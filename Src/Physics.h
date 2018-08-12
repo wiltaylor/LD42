@@ -17,7 +17,10 @@ public:
 	~Physics() = default;
 
 	HITTYPE testPosition(glm::vec2 position);
-	HITTYPE testPosition(glm::vec2 position, bool skipPlayer);
+	HITTYPE testPosition(glm::vec2 position, bool skipPlayer, GameObject* self);
+	HITTYPE testPosition(glm::vec2 position, bool skipPlayer, GameObject* self, bool projectile);
+	HITTYPE testProjectile(glm::vec2 position, bool skipPlayer, GameObject* self);
+
 	void update(float deltaTime);
 	void useInFront() const;
 
@@ -27,4 +30,6 @@ private:
 	Level* m_level;
 	Player* m_player;
 	GameObject* m_lastHitObject;
+	const float m_tolerance = 0.1f;
+
 };

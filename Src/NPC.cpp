@@ -1,7 +1,7 @@
 #include "NPC.h"
 #include <glm/detail/func_geometric.inl>
 
-void NPC::OnUpdate(const float deltaTime)
+void NPC::onUpdate(const float deltaTime)
 {
 	//Check distance
 	const auto diff = m_position - m_player->getPosition();
@@ -17,8 +17,13 @@ void NPC::OnUpdate(const float deltaTime)
 	}
 
 	m_velocity = -direction * m_maxSpeed;
-
-
-
-
 }
+
+void NPC::onHitWithProjectile(float dmg)
+{
+	m_hp -= dmg;
+
+	if (m_hp < 0)
+		cleanUp = true;
+}
+

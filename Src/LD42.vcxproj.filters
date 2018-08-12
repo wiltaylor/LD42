@@ -54,6 +54,9 @@
     <ClCompile Include="SoundClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HudRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetLoader.h">
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SoundClip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HudRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #include "PickUp.h"
 
-void PickUp::OnPlayerTouch(Player* m_player)
+void PickUp::onPlayerTouch(Player* m_player)
 {
 	visible = false;
 	cleanUp = true;

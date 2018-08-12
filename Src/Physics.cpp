@@ -76,7 +76,7 @@ void Physics::update(float deltaTime)
 
 	m_lastHitObject = nullptr;
 }
-void Physics::useInFront()
+void Physics::useInFront() const
 {
 	const glm::vec2 usePosition(
 		{
@@ -84,7 +84,7 @@ void Physics::useInFront()
 			m_player->getPosition().y + cosf(m_player->getAngle())
 		});
 
- 	const auto block = m_level->getBlock(usePosition.x, usePosition.y);
+ 	const auto block = m_level->getBlock(static_cast<int>(usePosition.x), static_cast<int>(usePosition.y));
 
 	if (block->door)
 	{

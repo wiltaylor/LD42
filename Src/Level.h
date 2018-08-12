@@ -14,12 +14,12 @@ public:
     int getWidth() { return m_width; }
     int getHeight() { return m_height; }
 	const std::vector<GameObject*> &getGameObjects() { return m_gameObjects; }
-	void AddObject(GameObject* obj) { m_gameObjects.push_back(obj); }
+	GameObject* getFreeProjectile();
 
 	void update(const float deltaTime);
 
 
-    LevelBlock* getBlock(int x, int y)
+    LevelBlock* getBlock(const int x, const int y)
     {
         return &m_levelBlocks[y * m_width + x];
     }
@@ -35,4 +35,6 @@ private:
     LevelBlock* m_levelBlocks;
 	std::vector<GameObject*> m_gameObjects;
 
+
+	const int m_MaxProjectiles = 20;
 };

@@ -13,7 +13,7 @@ Game::Game()
 	m_assetLoader.loadTexture("hellblob.png", "hellblob");
 	m_assetLoader.loadTexture("door.png", "door");
 
-	m_renderer = new Renderer(800, 600);
+	m_renderer = new Renderer(640, 480);
 	m_rayCastRenderer = new RayCastRenderer(m_renderer, &m_assetLoader, &m_player);
 }
 
@@ -158,20 +158,19 @@ void Game::update(float deltaTime)
 		m_coolDown = m_ShootcoolDown;
 	}
 
-	if(m_input.keyDown(SDL_SCANCODE_RCTRL) && m_coolDown <= 0)
+	if((m_input.keyDown(SDL_SCANCODE_RCTRL) || m_input.keyDown(SDL_SCANCODE_LCTRL)) && m_coolDown <= 0)
 	{		
-		auto fireball = new GameObject();
+		auto fireball = m_level->getFreeProjectile();
 
-		fireball->visible = true;
-		fireball->physicsObject = true;
-		fireball->setVelocity({ sinf(m_player.getAngle()) * 4.0f, cosf(m_player.getAngle()) * 4.0f });
-		fireball->setPosition(m_player.getPosition());
-		fireball->texture = m_assetLoader.getTextureId("magicbolt");
-		fireball->projectile = true;
-
-		m_level->AddObject(fireball);
-
-		m_coolDown = m_ShootcoolDown;
+		if(fireball != nullptr)
+		{
+			fireball->cleanUp = false;
+			fireball->playerOwned = true;
+			fireball->setVelocity({ sinf(m_player.getAngle()) * 4.0f, cosf(m_player.getAngle()) * 4.0f });
+			fireball->setPosition(m_player.getPosition());
+			
+			m_coolDown = m_ShootcoolDown;
+		}
 	}
 
 	m_rayCastRenderer->Draw();

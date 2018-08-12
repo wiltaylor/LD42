@@ -4,7 +4,9 @@
 void RayCastRenderer::Draw()
 {
 	//Clear depth buffer
-	std::fill(m_depthBuffer, m_depthBuffer + m_depthBufferSize, m_maxDistance);
+	std::fill(m_depthBuffer, m_depthBuffer + m_renderer->getScreenWidth() * m_renderer->getScreenHeight(), m_maxDistance);
+
+	glm::vec2 playerPos = m_player->getPosition();
 
 	for (int x = 0; x < m_renderer->getScreenWidth(); x++)
 	{
@@ -24,7 +26,7 @@ void RayCastRenderer::Draw()
 		{
 			distanceToWall += m_stepSize;
 
-			const glm::ivec2 test = m_player->getPosition() + eye * distanceToWall;
+			const glm::ivec2 test = playerPos + eye * distanceToWall;
 
 			if (test.x < 0 || test.x >= m_mapWidth || test.y < 0 || test.y >= m_mapHeight)
 			{
@@ -44,7 +46,7 @@ void RayCastRenderer::Draw()
 
 					const glm::vec2 blockMid{ test.x + 0.5f, test.y + 0.5f };
 
-					auto testPoint = m_player->getPosition() + eye * distanceToWall;
+					const auto testPoint = m_player->getPosition() + eye * distanceToWall;
 
 					const auto testAngle = atan2f((testPoint.y - blockMid.y), (testPoint.x - blockMid.x));
 
@@ -61,11 +63,11 @@ void RayCastRenderer::Draw()
 		}
 
 
-		int ceiling = static_cast<int>(static_cast<float>(m_renderer->getScreenHeight() / 2.0) - m_renderer->getScreenHeight() / static_cast<float>(distanceToWall));
-		int floor = m_renderer->getScreenHeight() - ceiling;
+		const auto ceiling = static_cast<int>(static_cast<float>(m_renderer->getScreenHeight() / 2.0) - m_renderer->getScreenHeight() / static_cast<float>(distanceToWall));
+		const auto floor = m_renderer->getScreenHeight() - ceiling;
 
 
-		for (int y = 0; y < m_renderer->getScreenHeight(); y++)
+		for (auto y = 0; y < m_renderer->getScreenHeight(); y++)
 		{
 			if (y < ceiling)
 			{
@@ -77,7 +79,7 @@ void RayCastRenderer::Draw()
 				{
 					sample.y = (static_cast<float>(y) - static_cast<float>(ceiling)) / (static_cast<float>(floor) - static_cast<float>(ceiling));
 					m_renderer->setPixel(x, y, wallTex->sampleColour(sample.x, sample.y));
-					m_depthBuffer[x] = distanceToWall;
+					m_depthBuffer[m_renderer->getScreenWidth() * y + x] = distanceToWall;
 				
 				}else
 				{
@@ -122,6 +124,7 @@ void RayCastRenderer::drawObjects()
 				{
 					const glm::vec2 sample = { x / objWidth, y / objHeight };
 					const auto objColumn = static_cast<int>(objMiddle + x - (objWidth / 2.0f));
+					const auto objRow = static_cast<int>(y + ceiling);
 
 					const auto colour = tex->sampleColour(sample.x, sample.y);
 
@@ -130,10 +133,10 @@ void RayCastRenderer::drawObjects()
 						if (colour == 0xFFFF00FF)
 							continue;
 
-						if(m_depthBuffer[objColumn] < distance)
+						if(m_depthBuffer[m_renderer->getScreenWidth() * objRow + objColumn] < distance)
 							continue;
 
-						m_depthBuffer[objColumn] = distance;
+						m_depthBuffer[m_renderer->getScreenWidth() * objRow + objColumn] = distance;
 						m_renderer->setPixel(objColumn, static_cast<int>(ceiling + y), colour);
 					}
 				}
@@ -148,10 +151,10 @@ RayCastRenderer::RayCastRenderer(Renderer* renderer, AssetLoader* loader, Player
 	m_wallTexture = m_assetLoader->getTextureId("wall");
 
 	m_depthBufferSize = m_renderer->getScreenWidth();
-	m_depthBuffer = new float[m_depthBufferSize];
+	m_depthBuffer = new float[m_renderer->getScreenWidth() * m_renderer->getScreenHeight()];
 } 
 
 RayCastRenderer::~RayCastRenderer()
 {
-	delete[] m_depthBuffer;	
+	delete[] m_depthBuffer;
 }

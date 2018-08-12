@@ -14,6 +14,7 @@ public:
 	bool solid;
 	bool cleanUp;
 	bool projectile;
+	bool playerOwned;
 
 	virtual void OnPlayerTouch(){}
 	virtual void OnUpdate(const float deltaTime){}

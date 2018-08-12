@@ -24,8 +24,16 @@ void AssetLoader::loadTexture(const std::string& filename, const std::string nam
 
 	SDL_LockSurface(surface);
 
-	result->data = new Uint32[surface->w * surface->h];
-	SDL_ConvertPixels(surface->w, surface->h, surface->format->format, surface->pixels, surface->pitch, SDL_PIXELFORMAT_ARGB8888, result->data, surface->w * 4);
+	int dataSize = surface->w * surface->h;
+
+	result->data = new Uint32[dataSize];
+
+	auto out = SDL_GetPixelFormatName(surface->format->format);
+
+	if (surface->format->format == SDL_PIXELFORMAT_ABGR8888)
+		memcpy_s(result->data, dataSize * sizeof(Uint32), surface->pixels, dataSize * sizeof(Uint32));
+	else
+		SDL_ConvertPixels(surface->w, surface->h, surface->format->format, surface->pixels, surface->pitch, SDL_PIXELFORMAT_ARGB8888, result->data, surface->w * 4);
 
 	SDL_UnlockSurface(surface);
 	SDL_FreeSurface(surface);

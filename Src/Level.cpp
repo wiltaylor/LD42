@@ -15,8 +15,23 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 	const auto hellBlobTexture = assetLoader->getTextureId("hellblob");
 	const auto doorTexture = assetLoader->getTextureId("door");
 	const auto wallTexture = assetLoader->getTextureId("wall");
+	const auto boltTexture = assetLoader->getTextureId("magicbolt");
 
 	m_player = player;
+
+	for(int i =0 ; i < m_MaxProjectiles; i++)
+	{
+		auto projectile = new GameObject;
+
+		projectile->setPosition({ 0,0 });
+		projectile->setVelocity({ 0,0 });
+		projectile->cleanUp = true;
+		projectile->texture = boltTexture;
+		projectile->visible = true;
+		projectile->projectile = true;
+
+		m_gameObjects.push_back(projectile);
+	}
 
 	std::ifstream levelFile;
 	levelFile.open(filename, std::ifstream::in);
@@ -40,8 +55,8 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
     {
         for(int x = 0; x < m_width; x++)
         {
-            int index = y * m_width + x;
-			std::string line = levelData[y];
+	        const int index = y * m_width + x;
+	        auto line = levelData[y];
 
             switch(line[x])
             {
@@ -142,11 +157,22 @@ Level::~Level() {
     delete[] m_levelBlocks;
 }
 
+GameObject* Level::getFreeProjectile()
+{
+	for(auto &p : m_gameObjects)
+	{
+		if (p->cleanUp && p->projectile)
+			return p;
+	}
+
+	return nullptr;
+}
+
 void Level::update(const float deltaTime)
 {
 	std::remove_if(m_gameObjects.begin(), m_gameObjects.end(), [&](GameObject* o)
 	{
-		if(o->cleanUp)
+		if(o->cleanUp && !o->projectile)
 		{
 			//delete o;
 			return true;

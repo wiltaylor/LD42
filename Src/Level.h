@@ -13,15 +13,13 @@ public:
 
     int getWidth() { return m_width; }
     int getHeight() { return m_height; }
-    int getPlayerStartX() { return m_playerStartX; }
-    int getPlayerStartY() { return m_playerStartY; }
 	const std::vector<GameObject*> &getGameObjects() { return m_gameObjects; }
 	void AddObject(GameObject* obj) { m_gameObjects.push_back(obj); }
 
 	void update(const float deltaTime);
 
 
-    const LevelBlock* getBlock(int x, int y)
+    LevelBlock* getBlock(int x, int y)
     {
         return &m_levelBlocks[y * m_width + x];
     }
@@ -32,8 +30,6 @@ private:
 
     int m_width;
     int m_height;
-    int m_playerStartX;
-    int m_playerStartY;
 	Player* m_player;
 
     LevelBlock* m_levelBlocks;

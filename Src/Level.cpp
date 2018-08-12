@@ -13,6 +13,8 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 	const auto pillarTexture = assetLoader->getTextureId("pillar");
 	const auto chestTexture = assetLoader->getTextureId("chest");
 	const auto hellBlobTexture = assetLoader->getTextureId("hellblob");
+	const auto doorTexture = assetLoader->getTextureId("door");
+	const auto wallTexture = assetLoader->getTextureId("wall");
 
 	m_player = player;
 
@@ -45,7 +47,7 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
             {
                 case '#':
                     m_levelBlocks[index].passable = false;
-                    m_levelBlocks[index].textureIndex = 1;
+                    m_levelBlocks[index].textureIndex = wallTexture;
                     break;
 				case '@':
 				{
@@ -97,9 +99,13 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 					m_levelBlocks[index].textureIndex = 0;
 				}
 				break;
+				case 'D':
+					m_levelBlocks[index].passable = false;
+					m_levelBlocks[index].textureIndex = doorTexture;
+					m_levelBlocks[index].door = true;
+					break;
                 case 'p':
-                    m_playerStartX = x;
-                    m_playerStartY = y;
+					m_player->setPosition({ x, y });
 					m_levelBlocks[index].passable = true;
 					m_levelBlocks[index].textureIndex = 0;
 					break;

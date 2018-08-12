@@ -76,3 +76,19 @@ void Physics::update(float deltaTime)
 
 	m_lastHitObject = nullptr;
 }
+void Physics::useInFront()
+{
+	const glm::vec2 usePosition(
+		{
+			m_player->getPosition().x + sinf(m_player->getAngle()),
+			m_player->getPosition().y + cosf(m_player->getAngle())
+		});
+
+ 	const auto block = m_level->getBlock(usePosition.x, usePosition.y);
+
+	if (block->door)
+	{
+		block->open = true;
+		block->passable = true;
+	}
+}

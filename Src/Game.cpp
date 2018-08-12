@@ -11,6 +11,7 @@ Game::Game()
 	m_assetLoader.loadTexture("chest.png", "chest");
 	m_assetLoader.loadTexture("MagicBolt.png", "magicbolt");
 	m_assetLoader.loadTexture("hellblob.png", "hellblob");
+	m_assetLoader.loadTexture("door.png", "door");
 
 	m_renderer = new Renderer(800, 600);
 	m_rayCastRenderer = new RayCastRenderer(m_renderer, &m_assetLoader, &m_player);
@@ -28,8 +29,6 @@ void Game::start()
 
 	m_rayCastRenderer->setMapData(m_level, m_level->getWidth(), m_level->getHeight());
 	
-	m_player.setPosition({ m_level->getPlayerStartX(), m_level->getPlayerStartY()});
-
 	long timeStep = 1000000;
 	long currentStep = 0;
 
@@ -44,7 +43,7 @@ void Game::start()
 		tp1 = tp2;
 		float ElapsedTime = elapsedTime.count();
 		
-		m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getAngle()));
+		m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getAngle()) + "Pos: " + std::to_string(m_player.getPosition().x) + "/" + std::to_string(m_player.getPosition().y));
 		update(ElapsedTime);
 	}
 }
@@ -141,6 +140,12 @@ void Game::update(float deltaTime)
 	}
 
 	if(m_input.keyDown(SDL_SCANCODE_SPACE) && m_coolDown <= 0)
+	{
+		m_physics->useInFront();
+		m_coolDown = m_ShootcoolDown;
+	}
+
+	if(m_input.keyDown(SDL_SCANCODE_RCTRL) && m_coolDown <= 0)
 	{		
 		auto fireball = new GameObject();
 

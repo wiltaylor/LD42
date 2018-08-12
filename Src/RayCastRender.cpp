@@ -17,6 +17,9 @@ void RayCastRenderer::Draw()
 
 		glm::vec2 sample({ 0.0f,0.0f });
 
+		Texture* wallTex = nullptr;
+
+
 		while (!hitWall && distanceToWall < m_maxDistance)
 		{
 			distanceToWall += m_stepSize;
@@ -30,9 +33,14 @@ void RayCastRenderer::Draw()
 			}
 			else
 			{
-				if (!m_level->getBlock(test.x, test.y)->passable)
+				const auto block = m_level->getBlock(test.x, test.y);
+
+
+				if (!block->passable)
 				{
 					hitWall = true;
+
+					wallTex = m_assetLoader->getTexture(block->textureIndex);
 
 					const glm::vec2 blockMid{ test.x + 0.5f, test.y + 0.5f };
 
@@ -52,10 +60,10 @@ void RayCastRenderer::Draw()
 			}
 		}
 
+
 		int ceiling = static_cast<int>(static_cast<float>(m_renderer->getScreenHeight() / 2.0) - m_renderer->getScreenHeight() / static_cast<float>(distanceToWall));
 		int floor = m_renderer->getScreenHeight() - ceiling;
 
-		Texture* wallTex = m_assetLoader->getTexture(m_wallTexture);
 
 		for (int y = 0; y < m_renderer->getScreenHeight(); y++)
 		{

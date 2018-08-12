@@ -19,6 +19,7 @@ public:
 	HITTYPE testPosition(glm::vec2 position);
 	HITTYPE testPosition(glm::vec2 position, bool skipPlayer);
 	void update(float deltaTime);
+	void useInFront();
 
 	GameObject* getLastHitObject() { return m_lastHitObject; }
 

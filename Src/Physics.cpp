@@ -1,42 +1,34 @@
 #include "Physics.h"
 
-bool Physics::canMove(float x, float y)
+HITTYPE Physics::testPosition(glm::vec2 position)
 {
-	auto block = m_level->getBlock(static_cast<int>(x), static_cast<int>(y));
-	return block->passable;
+	return testPosition(position, false);
 }
 
-HITTYPE Physics::testPosition(float x, float y)
-{
-	return testPosition(x, y, false);
-}
-
-HITTYPE Physics::testPosition(float x, float y, bool skipPlayer)
+HITTYPE Physics::testPosition(glm::vec2 position, bool skipPlayer)
 {
 	m_lastHitObject = nullptr;
 
-	auto block = m_level->getBlock(static_cast<int>(x), static_cast<int>(y));
+	auto block = m_level->getBlock(static_cast<int>(position.x), static_cast<int>(position.y));
 	
 	if (!block->passable)
 		return HIT_WALL;
 
 	if (!skipPlayer)
 	{
-		float playerDiffX = x - m_playerX;
-		float playerDiffY = y - m_playerY;
-
-		if (playerDiffX < 1.0f && playerDiffX > -1.0f && playerDiffY < 1.0f && playerDiffY > -1.0f)
+		auto diff = position - m_player->getPosition();
+		float mag = glm::length(diff);
+		
+		if (mag < 0.1f && mag > -0.1f)
 			return HIT_PLAYER;
 	}
 
 	for (auto &obj : m_level->getGameObjects())
 	{
+		auto diff = position - obj->getPosition();
+		float mag = glm::length(diff);
 
-
-		float objDiffX = x - obj->x;
-		float objDiffY = y - obj->y;
-
-		if (objDiffX < 1.0f && objDiffX > -1.0f && objDiffY < 1.0f && objDiffY > -1.0f)
+		if (mag < 0.1f && mag > -0.1f)
 		{
 			m_lastHitObject = obj;
 
@@ -61,18 +53,16 @@ void Physics::update(float deltaTime)
 		if(!obj->physicsObject)
 			continue;
 
-		float newX = obj->x + obj->vx * deltaTime;
-		float newY = obj->y + obj->vy * deltaTime;
+		const glm::vec2 newPosition = obj->getPosition() + obj->getVelocity() * deltaTime;
 
-		auto hit = testPosition(newX, newY);
+		auto hit = testPosition(newPosition);
 
 		if (hit == HIT_WALL || hit == HIT_OBJECT)
 		{
 			if (obj->projectile)
 				obj->cleanUp = true;
 
-			obj->vx = 0;
-			obj->vy = 0;
+			obj->setVelocity({ 0,0 });
 		}
 		else if(hit == HIT_PLAYER)
 		{
@@ -80,8 +70,7 @@ void Physics::update(float deltaTime)
 		}
 		else
 		{
-			obj->x = newX;
-			obj->y = newY;
+			obj->setPosition(newPosition);
 		}		
 	}
 

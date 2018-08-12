@@ -52,10 +52,8 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 					auto piller = new GameObject();
 
 					piller->visible = true;
-					piller->vx = 0.0f;
-					piller->vy = 0.0f;
-					piller->x = static_cast<float>(x);
-					piller->y = static_cast<float>(y);
+					piller->setVelocity({ 0.0f, 0.0f });
+					piller->setPosition({static_cast<float>(x), static_cast<float>(y)});
 					piller->solid = true;
 					piller->texture = pillarTexture;
 
@@ -70,10 +68,8 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 					auto hellblob = new NPC(m_player);
 
 					hellblob->visible = true;
-					hellblob->vx = 0.0f;
-					hellblob->vy = 0.0f;
-					hellblob->x = static_cast<float>(x);
-					hellblob->y = static_cast<float>(y);
+					hellblob->setVelocity({ 0.0f, 0.0f });
+					hellblob->setPosition({ static_cast<float>(x), static_cast<float>(y) });
 					hellblob->solid = false;
 					hellblob->texture = hellBlobTexture;
 					hellblob->physicsObject = true;
@@ -90,10 +86,8 @@ Level::Level(const std::string& filename, AssetLoader* assetLoader, Player* play
 					auto chest = new PickUp();
 
 					chest->visible = true;
-					chest->vx = 0.0f;
-					chest->vy = 0.0f;
-					chest->x = static_cast<float>(x);
-					chest->y = static_cast<float>(y);
+					chest->setVelocity({ 0.0f, 0.0f });
+					chest->setPosition({ static_cast<float>(x), static_cast<float>(y) });
 					chest->solid = false;
 					chest->texture = chestTexture;
 

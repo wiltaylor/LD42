@@ -1,42 +1,23 @@
 #include "NPC.h"
+#include <glm/detail/func_geometric.inl>
 
 void NPC::OnUpdate(const float deltaTime)
 {
-
-	//todo: proper vector maths here
-
 	//Check distance
-	float dX = x - m_player->getX();
-	float dY = y - m_player->getY();
-
-	if (dX < 0)
-		dX *= -1;
-	if (dY < 0)
-		dY *= -1;
-
-	float distance = sqrtf(dX * dX + dY * dY);
-
-	//if (distance < 0)
-	//	distance *= -1;
+	const auto diff = m_position - m_player->getPosition();
+	const auto distance = glm::length(diff);
+	const auto direction = glm::normalize(diff);
 
 
 	if(distance >= m_maxDistance)
 	{
-		vx = 0;
-		vy = 0;
+		m_velocity = { 0,0 };
 		m_state = NPC_Idle;
 		return;
 	}
 
-	////Move towards player
-	if (m_player->getX() > x && dX > m_tollerance)
-		vx = m_maxSpeed;
-	if(m_player->getX() < x && dX > m_tollerance)
-		vx = -m_maxSpeed;
-	if (m_player->getY() > y && dY > m_tollerance)
-		vy = m_maxSpeed;
-	if (m_player->getY() < y && dY > m_tollerance)
-		vy = -m_maxSpeed;
+	m_velocity = -direction * m_maxSpeed;
+
 
 
 

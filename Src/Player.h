@@ -1,17 +1,20 @@
 #pragma once
+#include <glm/vec2.hpp>
+
 class Player
 {
 public:
 	Player() = default;
 	~Player() = default;
 
-	float getX() { return m_x; }
-	float getY() { return m_y; }
-	float getA() { return m_a; }
+	float getAngle() { return m_angle; }
 
-	void setX(float value) { m_x = value; }
-	void setY(float value) { m_y = value; }
-	void setA(float value) { m_a = value; }
+	void setAngle(float value) { m_angle = value; }
+
+	void setPosition(glm::vec2 position) { m_position = position; }
+	glm::vec2& getPosition() { return m_position; }
+
 private:
-	float m_x = 0, m_y = 0, m_a = 0;
+	float m_angle = 0;
+	glm::vec2 m_position = {0,0};
 };

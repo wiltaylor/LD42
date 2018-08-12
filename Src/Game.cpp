@@ -13,7 +13,7 @@ Game::Game()
 	m_assetLoader.loadTexture("hellblob.png", "hellblob");
 
 	m_renderer = new Renderer(800, 600);
-	m_rayCastRenderer = new RayCastRenderer(m_renderer, &m_assetLoader);
+	m_rayCastRenderer = new RayCastRenderer(m_renderer, &m_assetLoader, &m_player);
 }
 
 Game::~Game()
@@ -24,12 +24,11 @@ Game::~Game()
 void Game::start()
 {
 	m_level = new Level("level1.txt", &m_assetLoader, &m_player);
-	m_physics = new Physics(m_level);
+	m_physics = new Physics(m_level, &m_player);
 
 	m_rayCastRenderer->setMapData(m_level, m_level->getWidth(), m_level->getHeight());
 	
-	m_player.setX(static_cast<float>(m_level->getPlayerStartX()));
-	m_player.setY(static_cast<float>(m_level->getPlayerStartY()));
+	m_player.setPosition({ m_level->getPlayerStartX(), m_level->getPlayerStartY()});
 
 	long timeStep = 1000000;
 	long currentStep = 0;
@@ -45,7 +44,7 @@ void Game::start()
 		tp1 = tp2;
 		float ElapsedTime = elapsedTime.count();
 		
-		m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getA()));
+		m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getAngle()));
 		update(ElapsedTime);
 	}
 }
@@ -58,27 +57,28 @@ void Game::update(float deltaTime)
 	m_renderer->cleanPixelBuffer();
 
 	m_input.update();
-	m_physics->setPlayerPosition(m_player.getX(), m_player.getY(), m_player.getA());
 
 	if (m_input.keyDown(SDL_SCANCODE_ESCAPE) || m_input.hasQuit())
 		m_running = false;
 
 	if(m_input.keyDown(SDL_SCANCODE_A))
-		m_player.setA(m_player.getA() - 0.8f * deltaTime);
+		m_player.setAngle(m_player.getAngle() - 0.8f * deltaTime);
 
 	if (m_input.keyDown(SDL_SCANCODE_D))
-		m_player.setA(m_player.getA() + 0.8f * deltaTime);
+		m_player.setAngle(m_player.getAngle() + 0.8f * deltaTime);
 
 	if(m_input.keyDown(SDL_SCANCODE_W))
 	{
-
-		float newX = m_player.getX() + sinf(m_player.getA()) * 5.0f * deltaTime;
-		float newY = m_player.getY() + cosf(m_player.getA()) * 5.0f * deltaTime;
-
-		if (m_physics->testPosition(newX, newY, true) == HIT_NOTHING)
+		const auto pos = m_player.getPosition();
+		const glm::vec2 newPosition(
+			{ 
+				pos.x + sinf(m_player.getAngle()) * 5.0f * deltaTime, 
+				pos.y + cosf(m_player.getAngle()) * 5.0f * deltaTime 
+			});	
+	
+		if (m_physics->testPosition(newPosition, true) == HIT_NOTHING)
 		{
-			m_player.setX(newX);
-			m_player.setY(newY);
+			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
 				m_physics->getLastHitObject()->OnPlayerTouch();
@@ -87,13 +87,16 @@ void Game::update(float deltaTime)
 
 	if (m_input.keyDown(SDL_SCANCODE_S))
 	{
-		float newX = m_player.getX() - sinf(m_player.getA()) * 5.0f * deltaTime;
-		float newY = m_player.getY() - cosf(m_player.getA()) * 5.0f * deltaTime;
+		const auto pos = m_player.getPosition();
+		const glm::vec2 newPosition(
+			{
+				pos.x - sinf(m_player.getAngle()) * 5.0f * deltaTime,
+				pos.y - cosf(m_player.getAngle()) * 5.0f * deltaTime
+			});
 
-		if (m_physics->testPosition(newX, newY, true) == HIT_NOTHING)
+		if (m_physics->testPosition(newPosition, true) == HIT_NOTHING)
 		{
-			m_player.setX(newX);
-			m_player.setY(newY);
+			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
 				m_physics->getLastHitObject()->OnPlayerTouch();
@@ -102,13 +105,17 @@ void Game::update(float deltaTime)
 
 	if(m_input.keyDown(SDL_SCANCODE_Q))
 	{
-		float newX = m_player.getX() - cosf(m_player.getA()) * 5.0f * deltaTime;
-		float newY = m_player.getY() + sinf(m_player.getA()) * 5.0f * deltaTime;
+		const auto pos = m_player.getPosition();
+		const glm::vec2 newPosition(
+			{
+				pos.x - cosf(m_player.getAngle()) * 5.0f * deltaTime,
+				pos.y + sinf(m_player.getAngle()) * 5.0f * deltaTime
+			});
 
-		if (m_physics->testPosition(newX, newY, true) == HIT_NOTHING)
+
+		if (m_physics->testPosition(newPosition, true) == HIT_NOTHING)
 		{
-			m_player.setX(newX);
-			m_player.setY(newY);
+			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
 				m_physics->getLastHitObject()->OnPlayerTouch();
@@ -117,13 +124,16 @@ void Game::update(float deltaTime)
 
 	if (m_input.keyDown(SDL_SCANCODE_E))
 	{
-		float newX = m_player.getX() + cosf(m_player.getA()) * 5.0f * deltaTime;
-		float newY = m_player.getY() - sinf(m_player.getA()) * 5.0f * deltaTime;
+		const auto pos = m_player.getPosition();
+		const glm::vec2 newPosition(
+			{
+				pos.x + cosf(m_player.getAngle()) * 5.0f * deltaTime,
+				pos.y - sinf(m_player.getAngle()) * 5.0f * deltaTime
+			});
 
-		if (m_physics->testPosition(newX, newY, true) == HIT_NOTHING)
+		if (m_physics->testPosition(newPosition, true) == HIT_NOTHING)
 		{
-			m_player.setX(newX);
-			m_player.setY(newY);
+			m_player.setPosition(newPosition);
 
 			if (m_physics->getLastHitObject() != nullptr)
 				m_physics->getLastHitObject()->OnPlayerTouch();
@@ -136,10 +146,8 @@ void Game::update(float deltaTime)
 
 		fireball->visible = true;
 		fireball->physicsObject = true;
-		fireball->vx = sinf(m_player.getA()) * 4.0f;
-		fireball->vy = cosf(m_player.getA()) * 4.0f;
-		fireball->x = m_player.getX();
-		fireball->y = m_player.getY();
+		fireball->setVelocity({ sinf(m_player.getAngle()) * 4.0f, cosf(m_player.getAngle()) * 4.0f });
+		fireball->setPosition(m_player.getPosition());
 		fireball->texture = m_assetLoader.getTextureId("magicbolt");
 		fireball->projectile = true;
 
@@ -150,7 +158,6 @@ void Game::update(float deltaTime)
 
 	m_physics->update(deltaTime);
 	m_level->update(deltaTime);
-	m_rayCastRenderer->setPlayerPosition(m_player.getX(), m_player.getY(), m_player.getA());
 	m_rayCastRenderer->Draw();
 	m_rayCastRenderer->drawObjects();
 	m_renderer->flip();

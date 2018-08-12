@@ -3,19 +3,13 @@
 #include "GameObject.h"
 #include <vector>
 #include "Level.h"
+#include "Player.h"
 
 class RayCastRenderer
 {
 public:
-	RayCastRenderer(Renderer* renderer, AssetLoader* assetLoader);
+	RayCastRenderer(Renderer* renderer, AssetLoader* assetLoader, Player* player);
 	~RayCastRenderer();
-
-	void setPlayerPosition(float x, float y, float angle)
-	{
-		m_playerX = x;
-		m_playerY = y;
-		m_playerA = angle;
-	}
 
 	void setMapData(Level* level, int width, int height)
 	{
@@ -35,9 +29,6 @@ public:
 
 private:
 	Renderer* m_renderer;
-	float m_playerX = 0;
-	float m_playerY = 0;
-	float m_playerA = 0;
 	Level* m_level = nullptr;
 	int m_mapWidth = 0;
 	int m_mapHeight = 0;
@@ -45,6 +36,8 @@ private:
 	int m_depthBufferSize = 0;
 	Uint32 m_celingColour = 0xFFCAC5CA;
 	Uint32 m_floorColour = 0xFF666066;
+
+	Player* m_player;
 
 	const float m_fov = 3.14159f / 4.0f;
 	const float m_maxDistance = 16.0f;

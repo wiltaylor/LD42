@@ -1,4 +1,5 @@
 #include "RayCastRender.h"
+#include <glm/detail/func_geometric.inl>
 
 void RayCastRenderer::Draw()
 {
@@ -7,51 +8,46 @@ void RayCastRenderer::Draw()
 
 	for (int x = 0; x < m_renderer->getScreenWidth(); x++)
 	{
-		float rayAngle = (m_playerA - m_fov / 2.0f) + (static_cast<float>(x) / static_cast<float>(m_renderer->getScreenWidth())) * m_fov;
+		const auto rayAngle = (m_player->getAngle() - m_fov / 2.0f) + (static_cast<float>(x) / static_cast<float>(m_renderer->getScreenWidth())) * m_fov;
 		float distanceToWall = 0;
-		bool hitWall = false;
+		auto hitWall = false;
 
-		float eyeX = sinf(rayAngle);
-		float eyeY = cosf(rayAngle);
-		float sampleX = 0.0f;
-		bool testData = false;
+		const glm::vec2 eye = { sinf(rayAngle), cosf(rayAngle) };
+
+
+		glm::vec2 sample({ 0.0f,0.0f });
 
 		while (!hitWall && distanceToWall < m_maxDistance)
 		{
 			distanceToWall += m_stepSize;
 
-			const auto testX = static_cast<int>(m_playerX + eyeX * distanceToWall);
-			const auto testY = static_cast<int>(m_playerY + eyeY * distanceToWall);
+			const glm::ivec2 test = m_player->getPosition() + eye * distanceToWall;
 
-			if (testX < 0 || testX >= m_mapWidth || testY < 0 || testY >= m_mapHeight)
+			if (test.x < 0 || test.x >= m_mapWidth || test.y < 0 || test.y >= m_mapHeight)
 			{
 				hitWall = true;
 				distanceToWall = m_maxDistance;
 			}
 			else
 			{
-				if (!m_level->getBlock(testX, testY)->passable)
+				if (!m_level->getBlock(test.x, test.y)->passable)
 				{
 					hitWall = true;
 
-					float blockMidX = static_cast<float>(testX) + 0.5f;
-					float blockMidY = static_cast<float>(testY) + 0.5f;
+					const glm::vec2 blockMid{ test.x + 0.5f, test.y + 0.5f };
 
-					float testPointX = m_playerX + eyeX * distanceToWall;
-					float testPointY = m_playerY + eyeY * distanceToWall;
+					auto testPoint = m_player->getPosition() + eye * distanceToWall;
 
-					float testAngle = atan2f((testPointY - blockMidY), (testPointX - blockMidX));
-
-
+					const auto testAngle = atan2f((testPoint.y - blockMid.y), (testPoint.x - blockMid.x));
 
 					if (testAngle > -3.14159f * 0.25f && testAngle < 3.14159f * 0.25f)
-						sampleX = testPointY - static_cast<float>(testY);				
+						sample.x = testPoint.y - static_cast<float>(test.y);				
 					if(testAngle >= 3.14159f * 0.25f && testAngle < 3.14159f * 0.75f)
-						sampleX = testPointX - static_cast<float>(testX);
+						sample.x = testPoint.x - static_cast<float>(test.x);
 					if (testAngle < -3.14159f * 0.25f && testAngle >= -3.14159f * 0.75f)
-						sampleX = testPointX - static_cast<float>(testX);
+						sample.x = testPoint.x - static_cast<float>(test.x);
 					if (testAngle >= 3.14159f * 0.75f || testAngle < -3.14159f * 0.75f)
-						sampleX = testPointY - static_cast<float>(testY);
+						sample.x = testPoint.y- static_cast<float>(test.y);
 				}
 			}
 		}
@@ -71,8 +67,8 @@ void RayCastRenderer::Draw()
 			{
 				if(distanceToWall < m_maxDistance)
 				{
-					float sampleY = (static_cast<float>(y) - static_cast<float>(ceiling)) / (static_cast<float>(floor) - static_cast<float>(ceiling));
-					m_renderer->setPixel(x, y, wallTex->sampleColour(sampleX, sampleY));
+					sample.y = (static_cast<float>(y) - static_cast<float>(ceiling)) / (static_cast<float>(floor) - static_cast<float>(ceiling));
+					m_renderer->setPixel(x, y, wallTex->sampleColour(sample.x, sample.y));
 					m_depthBuffer[x] = distanceToWall;
 				
 				}else
@@ -95,40 +91,34 @@ void RayCastRenderer::drawObjects()
 		if(!obj->visible || obj->cleanUp)
 			continue;
 
-		float vecX = obj->x - m_playerX;
-		float vecY = obj->y - m_playerY;
-		float distance = sqrtf(vecX * vecX + vecY * vecY);
+		const auto vec = obj->getPosition() - m_player->getPosition();
+		const auto distance = glm::length(vec);
+		const glm::vec2 eye = { sinf(m_player->getAngle()), cos(m_player->getAngle()) };
+		const auto objectAngle = atan2f(eye.y, eye.x) - atan2f(vec.y, vec.x);
 
-		float eyeX = sinf(m_playerA);
-		float eyeY = cos(m_playerA);
-
-		float objectAngle = atan2f(eyeY, eyeX) - atan2f(vecY, vecX);
-
-		bool inPlayerFov = fabs(objectAngle) < m_fov / 2.0f;
+		const auto inPlayerFov = fabs(objectAngle) < m_fov / 2.0f;
 
 		if(inPlayerFov && distance >= 0.5f && distance < m_maxDistance)
 		{
-			auto tex = m_assetLoader->getTexture(obj->texture);
+			const auto tex = m_assetLoader->getTexture(obj->texture);
 
-			float ceiling = static_cast<float>(m_renderer->getScreenHeight() / 2.0f) - m_renderer->getScreenHeight() / static_cast<float>(distance);
-			float floor = m_renderer->getScreenHeight() - ceiling;
-			float objHeight = floor - ceiling;
-			float objAspectRatio = static_cast<float>(tex->height) / static_cast<float>(tex->width);
-			float objWidth = objHeight / objAspectRatio;
-			float objMiddle = (0.5f * (objectAngle / (m_fov / 2.0f)) + 0.5f) * static_cast<float>(m_renderer->getScreenWidth());
+			const auto ceiling = static_cast<float>(m_renderer->getScreenHeight() / 2.0f) - m_renderer->getScreenHeight() / static_cast<float>(distance);
+			const auto floor = m_renderer->getScreenHeight() - ceiling;
+			const auto objHeight = floor - ceiling;
+			const auto objAspectRatio = static_cast<float>(tex->height) / static_cast<float>(tex->width);
+			const auto objWidth = objHeight / objAspectRatio;
+			const auto objMiddle = (0.5f * (objectAngle / (m_fov / 2.0f)) + 0.5f) * static_cast<float>(m_renderer->getScreenWidth());
 
-			for(int x = 0; x < objWidth; x++)
-				for(int y = 0; y < objHeight; y++)
+			for(auto x = 0; x < objWidth; x++)
+				for(auto y = 0; y < objHeight; y++)
 				{
-					float sampleX = x / objWidth;
-					float sampleY = y / objHeight;
-					int objColumn = static_cast<int>(objMiddle + x - (objWidth / 2.0f));
+					const glm::vec2 sample = { x / objWidth, y / objHeight };
+					const auto objColumn = static_cast<int>(objMiddle + x - (objWidth / 2.0f));
 
-					Uint32 colour = tex->sampleColour(sampleX, sampleY);
+					const auto colour = tex->sampleColour(sample.x, sample.y);
 
 					if (objColumn >= 0 && objColumn < m_renderer->getScreenWidth() && ceiling + y >= 0 && ceiling + y < m_renderer->getScreenHeight())
 					{
-
 						if (colour == 0xFFFF00FF)
 							continue;
 
@@ -145,7 +135,7 @@ void RayCastRenderer::drawObjects()
 	m_gameObjects.clear();
 }
 
-RayCastRenderer::RayCastRenderer(Renderer* renderer, AssetLoader* loader): m_renderer{ renderer }, m_assetLoader {loader}
+RayCastRenderer::RayCastRenderer(Renderer* renderer, AssetLoader* loader, Player* player): m_renderer{ renderer }, m_player{player}, m_assetLoader {loader}
 {
 	m_wallTexture = m_assetLoader->getTextureId("wall");
 

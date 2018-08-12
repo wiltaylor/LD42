@@ -26,6 +26,7 @@ private:
 	Level* m_level;
 	
 	void update(float deltaTime);
+	void fixedUpdate(float deltaTime);
 	float m_coolDown = 0.0f;
 	const float m_ShootcoolDown = 3.0f;
 

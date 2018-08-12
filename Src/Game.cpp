@@ -29,8 +29,8 @@ void Game::start()
 
 	m_rayCastRenderer->setMapData(m_level, m_level->getWidth(), m_level->getHeight());
 	
-	long timeStep = 1000000;
-	long currentStep = 0;
+	float timeStep = 0.5f;
+	float currentStep = 0;
 
 	auto tp1 = std::chrono::system_clock::now();
 	auto tp2 = std::chrono::system_clock::now();	
@@ -42,10 +42,23 @@ void Game::start()
 		std::chrono::duration<float> elapsedTime = tp2 - tp1;
 		tp1 = tp2;
 		float ElapsedTime = elapsedTime.count();
-		
+		currentStep += ElapsedTime;
+
+		if(currentStep > timeStep)
+		{
+			fixedUpdate(timeStep);
+			currentStep -= timeStep;
+		}
+
 		m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getAngle()) + "Pos: " + std::to_string(m_player.getPosition().x) + "/" + std::to_string(m_player.getPosition().y));
 		update(ElapsedTime);
 	}
+}
+
+void Game::fixedUpdate(float deltaTime)
+{
+	m_physics->update(deltaTime);
+	m_level->update(deltaTime);
 }
 
 void Game::update(float deltaTime)
@@ -161,8 +174,6 @@ void Game::update(float deltaTime)
 		m_coolDown = m_ShootcoolDown;
 	}
 
-	m_physics->update(deltaTime);
-	m_level->update(deltaTime);
 	m_rayCastRenderer->Draw();
 	m_rayCastRenderer->drawObjects();
 	m_renderer->flip();

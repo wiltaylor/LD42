@@ -30,6 +30,7 @@
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Portal.cpp" />
     <ClCompile Include="RayCastRender.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="SoundClip.cpp" />
@@ -47,6 +48,7 @@
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PickUp.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Portal.h" />
     <ClInclude Include="RayCastRender.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SoundClip.h" />

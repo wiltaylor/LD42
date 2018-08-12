@@ -8,13 +8,19 @@
 class Level
 {
 public:
-    explicit Level(const std::string& filename, AssetLoader* assetLoader, Player* player);
+	explicit Level(AssetLoader* assetLoader, Player* player) :m_assetLoader{ assetLoader }, m_player { player } {}
     ~Level();
 
-    int getWidth() { return m_width; }
-    int getHeight() { return m_height; }
+
+
+    int getWidth() const { return m_width; }
+    int getHeight() const { return m_height; }
 	const std::vector<GameObject*> &getGameObjects() { return m_gameObjects; }
 	GameObject* getFreeProjectile();
+
+	void loadLevel(int level);
+	int getCurrentLevel() const { return m_currentLevel; }
+	
 
 	void update(const float deltaTime);
 
@@ -27,12 +33,13 @@ public:
 private:
     unsigned int m_ceilingColour = 0;
     unsigned int m_floorColour = 0;
-
+	int m_currentLevel;
     int m_width;
     int m_height;
 	Player* m_player;
+	AssetLoader* m_assetLoader;
 
-    LevelBlock* m_levelBlocks;
+    LevelBlock* m_levelBlocks = nullptr;
 	std::vector<GameObject*> m_gameObjects;
 
 

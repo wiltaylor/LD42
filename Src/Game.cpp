@@ -20,6 +20,7 @@ Game::Game()
 	m_assetLoader.loadTexture("greenkey.png", "greenkey");
 	m_assetLoader.loadTexture("bluekey.png", "bluekey");
 	m_assetLoader.loadTexture("goldkey.png", "goldkey");
+	m_assetLoader.loadTexture("portal.png", "portal");
 
 	m_assetLoader.loadSoundClip("pickup.wav", "pickup");
 	
@@ -42,7 +43,8 @@ void Game::start()
 	m_pickupSound = m_assetLoader.getSoundClip("pickup");
 
 
-	m_level = new Level("level1.txt", &m_assetLoader, &m_player);
+	m_level = new Level(&m_assetLoader, &m_player);
+	m_level->loadLevel(1);
 	m_physics = new Physics(m_level, &m_player);
 
 	m_rayCastRenderer->setMapData(m_level, m_level->getWidth(), m_level->getHeight());

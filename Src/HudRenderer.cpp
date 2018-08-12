@@ -16,6 +16,10 @@ HUDRenderer::HUDRenderer(Renderer* render, Player* player) : m_renderer{render},
 	m_deathColour = loadTexture("deathcolour.png");
 	m_logo = loadTexture("logo.png");
 	m_endScreen = loadTexture("endscreen.png");
+	m_redkey = loadTexture("redkeyicon.png");
+	m_bluekey = loadTexture("bluekeyicon.png");
+	m_greenkey = loadTexture("greenkeyicon.png");
+	m_goldkey = loadTexture("goldkeyicon.png");
 
 	m_gameOver = m_renderer->getTextFromText("Game Over!", { 255,255,255,0});
 	m_gameOverSubText = m_renderer->getTextFromText("Press space to restart", { 255,255,255,0 });
@@ -41,6 +45,18 @@ void HUDRenderer::draw() const
 	m_renderer->drawTexture(m_currentWizard, m_renderer->getScreenWidth() / 2 - 32, m_renderer->getScreenHeight() - 75, 64, 64);
 	m_renderer->drawTexture(m_hpTexture, m_renderer->getScreenWidth() / 2 - 16, m_renderer->getScreenHeight() - 110, 32, 32);
 	m_renderer->drawTexture(m_activestaff, m_renderer->getScreenWidth() / 2 - 128, m_renderer->getScreenHeight() - 235, 256, 128);
+
+	if (m_player->hasKey(DOORLOCK_RED))
+		m_renderer->drawTexture(m_redkey, m_renderer->getScreenWidth() / 2 - (8 * 2 + 8), m_renderer->getScreenHeight() - 16, 16, 16);
+
+	if (m_player->hasKey(DOORLOCK_GREEN))
+		m_renderer->drawTexture(m_greenkey, m_renderer->getScreenWidth() / 2 - 8, m_renderer->getScreenHeight() - 16, 16, 16);
+
+	if (m_player->hasKey(DOORLOCK_BLUE))
+		m_renderer->drawTexture(m_bluekey, m_renderer->getScreenWidth() / 2 + 8, m_renderer->getScreenHeight() - 16, 16, 16);
+
+	if (m_player->hasKey(DOORLOCK_GOLD))
+		m_renderer->drawTexture(m_goldkey, m_renderer->getScreenWidth() / 2 + (8 * 2 + 8), m_renderer->getScreenHeight() - 16, 16, 16);
 
 	if (m_player->getHp() <= 0)
 	{

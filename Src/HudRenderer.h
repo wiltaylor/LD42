@@ -32,6 +32,10 @@ private:
 	SDL_Texture* m_deathColour;
 	SDL_Texture* m_logo;
 	SDL_Texture* m_endScreen;
+	SDL_Texture* m_redkey;
+	SDL_Texture* m_bluekey;
+	SDL_Texture* m_greenkey;
+	SDL_Texture* m_goldkey;
 
 	Player* m_player;
 

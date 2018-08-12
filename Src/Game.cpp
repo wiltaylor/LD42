@@ -73,6 +73,8 @@ void Game::start()
 	auto tp1 = std::chrono::system_clock::now();
 	auto tp2 = std::chrono::system_clock::now();	
 
+	m_renderer->setWindowTitle("Temple of Hate");
+
 	while(m_running)
 	{
 		// Handle Timing
@@ -88,7 +90,8 @@ void Game::start()
 			currentStep -= timeStep;
 		}
 
-		m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getAngle()) + "Pos: " + std::to_string(m_player.getPosition().x) + "/" + std::to_string(m_player.getPosition().y) + "cooldown: " + std::to_string(m_coolDown));
+		//m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getAngle()) + "Pos: " + std::to_string(m_player.getPosition().x) + "/" + std::to_string(m_player.getPosition().y) + "cooldown: " + std::to_string(m_coolDown));
+
 		update(ElapsedTime);
 	}
 }

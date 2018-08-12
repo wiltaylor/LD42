@@ -83,7 +83,7 @@ void RayCastRenderer::Draw()
 				
 				}else
 				{
-					m_renderer->setPixel(x, y, 0xFFFF0000);
+					m_renderer->setPixel(x, y, m_floorColour);
 				}				
 			}
 			else

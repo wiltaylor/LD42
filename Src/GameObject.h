@@ -16,13 +16,13 @@ public:
 	GameObject(): type{OBJECT_NPC} {}
 	virtual ~GameObject() = default;
 
-	bool visible;
-	int texture;
-	bool physicsObject;
-	bool solid;
-	bool cleanUp;
-	bool projectile;
-	bool playerOwned;
+	bool visible = true;
+	int texture = 0;
+	bool physicsObject = false;
+	bool solid = false;
+	bool cleanUp = false;
+	bool projectile = false;
+	bool playerOwned = false;
 	float dmg = 0.0f;
 	GAMEOBJECT_TYPE type;
 

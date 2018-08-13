@@ -1,0 +1,2 @@
+emcc src/AssetLoader.cpp src/AudioSystem.cpp src/Game.cpp src/HudRenderer.cpp src/Input.cpp src/Level.cpp src/Main.cpp src/NPC.cpp src/Physics.cpp src/Pickup.cpp src/Player.cpp src/Portal.cpp src/RayCastRender.cpp src/Renderer.cpp src/SoundClip.cpp -o bin/web/index.html -I deps/all/glm -I src -std=c++1z -s USE_SDL=2 -lm -s USE_SDL_IMAGE=2  -s USE_FREETYPE=1 -s USE_OGG=1 -s USE_VORBIS=1 -s USE_SDL_TTF=2 --preload-file Assets@ --use-preload-plugins
+

@@ -7,6 +7,7 @@
 #include "AssetLoader.h"
 #include "AudioSystem.h"
 #include "HudRenderer.h"
+#include <chrono>
 
 class Game
 {
@@ -14,7 +15,8 @@ public:
 	Game();
 	~Game();
 
-	void start();	
+	void runLoop();
+	bool isRunning() { return m_running; }
 
 private:
 	bool m_running = true;
@@ -34,4 +36,8 @@ private:
 	const float m_ShootcoolDown = 1.0f;
 
 	SoundClip* m_pickupSound;
+	float m_timeStep = 0.1f;
+	float m_currentStep = 0;
+	std::chrono::time_point<std::chrono::system_clock> m_tp1 = std::chrono::system_clock::now();
+	std::chrono::time_point<std::chrono::system_clock> m_tp2 = std::chrono::system_clock::now();
 };

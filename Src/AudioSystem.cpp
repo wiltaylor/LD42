@@ -20,9 +20,7 @@ AudioSystem::~AudioSystem()
 void AudioSystem::PlayMusic(const std::string& filename)
 {
 	m_music = Mix_LoadMUS(filename.c_str());
-
 	Mix_PlayMusic(m_music, -1);
-
 }
 
 void AudioSystem::SetMusicVolumn(int ammount)
@@ -32,7 +30,7 @@ void AudioSystem::SetMusicVolumn(int ammount)
 
 int AudioSystem::getMusicVolumn()
 {
-	//-1 causes it to return volumn instead of setting it.
+    //-1 causes it to return volumn instead of setting it.
 	return 	Mix_VolumeMusic(-1);
 }
 

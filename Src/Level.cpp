@@ -102,6 +102,53 @@ void Level::loadLevel(int level)
 				m_levelBlocks[index].passable = true;
 				m_levelBlocks[index].textureIndex = 0;
 			}
+			case '%':
+			{
+				auto plant = new GameObject();
+
+				plant->visible = true;
+				plant->setVelocity({ 0.0f, 0.0f });
+				plant->setPosition({ static_cast<float>(x), static_cast<float>(y) });
+				plant->solid = false;
+				plant->texture = m_assetLoader->getTextureId("plant");
+
+				m_gameObjects.push_back(plant);
+
+				m_levelBlocks[index].passable = true;
+ 				m_levelBlocks[index].textureIndex = 0;
+				break;
+			}
+			case '&':
+			{
+				auto blood = new GameObject();
+
+				blood->visible = true;
+				blood->setVelocity({ 0.0f, 0.0f });
+				blood->setPosition({ static_cast<float>(x), static_cast<float>(y) });
+				blood->solid = false;
+				blood->texture = m_assetLoader->getTextureId("blood");
+
+				m_gameObjects.push_back(blood);
+
+				m_levelBlocks[index].passable = true;
+				m_levelBlocks[index].textureIndex = 0;
+			}
+			break;
+			case '^':
+			{
+				auto blood = new GameObject();
+
+				blood->visible = true;
+				blood->setVelocity({ 0.0f, 0.0f });
+				blood->setPosition({ static_cast<float>(x), static_cast<float>(y) });
+				blood->solid = false;
+				blood->texture = m_assetLoader->getTextureId("barrel");
+
+				m_gameObjects.push_back(blood);
+
+				m_levelBlocks[index].passable = true;
+				m_levelBlocks[index].textureIndex = 0;
+			}
 			break;
 			case 'h':
 			{

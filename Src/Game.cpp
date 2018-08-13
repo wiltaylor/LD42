@@ -1,21 +1,23 @@
 #include "Game.h"
-#include <chrono>
 #include "AssetLoader.h"
 #include "Level.h"
+#include <iostream>
 
 Game::Game()
 {
-
+	std::cout << "starting up game..." << std::endl;
 	
 	m_renderer = new Renderer(800, 600);
 	m_hudRenderer = new HUDRenderer(m_renderer, &m_player);
 	m_rayCastRenderer = new RayCastRenderer(m_renderer, &m_assetLoader, &m_player);
 
+	std::cout << "Loading image assets..." << std::endl;
+
 	//Load game textures
 	m_assetLoader.loadTexture("wall.png", "wall");
 	m_assetLoader.loadTexture("pillar.png", "pillar");
 	m_assetLoader.loadTexture("chest.png", "chest");
-	m_assetLoader.loadTexture("MagicBolt.png", "magicbolt");
+	m_assetLoader.loadTexture("magicbolt.png", "magicbolt");
 	m_assetLoader.loadTexture("hellblob.png", "hellblob");
 	m_assetLoader.loadTexture("door.png", "door");
 	m_assetLoader.loadTexture("reddoor.png", "reddoor");
@@ -33,7 +35,12 @@ Game::Game()
 	m_assetLoader.loadTexture("skellington3.png", "skellington3");
 	m_assetLoader.loadTexture("skellingtondeath1.png", "skellingtondeath1");
 	m_assetLoader.loadTexture("skellingtondeath2.png", "skellingtondeath2");
+	m_assetLoader.loadTexture("plant.png", "plant");
+	m_assetLoader.loadTexture("blood.png", "blood");
+	m_assetLoader.loadTexture("barrel.png", "barrel");
 
+	std::cout << "Loading sound assets..." << std::endl;
+	
 	m_assetLoader.loadSoundClip("pickup.wav", "pickup");
 	m_assetLoader.loadSoundClip("fire.ogg", "fire");
 	m_assetLoader.loadSoundClip("door.ogg", "door");
@@ -44,6 +51,23 @@ Game::Game()
 	m_assetLoader.loadSoundClip("hit.ogg", "hit");
 	m_assetLoader.loadSoundClip("playerhit.ogg", "playerhit");
 
+	std::cout << "Loading game systems..." << std::endl;
+
+
+	m_pickupSound = m_assetLoader.getSoundClip("pickup");
+	m_physics = new Physics(&m_player, &m_assetLoader);
+
+	m_level = new Level(&m_assetLoader, &m_player, m_hudRenderer, m_physics);
+	m_physics->setLevel(m_level);
+
+	m_level->loadLevel(1);
+
+	m_rayCastRenderer->setMapData(m_level, m_level->getWidth(), m_level->getHeight());
+	m_renderer->setWindowTitle("Temple of Hate");
+
+	std::cout << "Finished loading game..." << std::endl;
+
+
 }
 
 Game::~Game()
@@ -51,50 +75,23 @@ Game::~Game()
 	delete m_renderer;
 }
 
-void Game::start()
+void Game::runLoop()
 {
-	//turn back on before release
-	//m_audio.PlayMusic("bgmuisc.mp3");
-	//m_audio.SetMusicVolumn(1);
+	// Handle Timing
+	m_tp2 = std::chrono::system_clock::now();
+	std::chrono::duration<float> elapsedTime = m_tp2 - m_tp1;
+	m_tp1 = m_tp2;
+	float ElapsedTime = elapsedTime.count();
+	m_currentStep += ElapsedTime;
 
-	m_pickupSound = m_assetLoader.getSoundClip("pickup");
-
-	m_physics = new Physics(&m_player, &m_assetLoader);
-	m_level = new Level(&m_assetLoader, &m_player, m_hudRenderer, m_physics);
-	m_physics->setLevel(m_level);
-	m_level->loadLevel(1);
-	
-
-	m_rayCastRenderer->setMapData(m_level, m_level->getWidth(), m_level->getHeight());
-	
-	float timeStep = 0.1f;
-	float currentStep = 0;
-
-	auto tp1 = std::chrono::system_clock::now();
-	auto tp2 = std::chrono::system_clock::now();	
-
-	m_renderer->setWindowTitle("Temple of Hate");
-
-	while(m_running)
+	if (m_currentStep > m_timeStep)
 	{
-		// Handle Timing
-		tp2 = std::chrono::system_clock::now();
-		std::chrono::duration<float> elapsedTime = tp2 - tp1;
-		tp1 = tp2;
-		float ElapsedTime = elapsedTime.count();
-		currentStep += ElapsedTime;
-
-		if(currentStep > timeStep)
-		{
-			fixedUpdate(timeStep);
-			currentStep -= timeStep;
-		}
-
-		//m_renderer->setWindowTitle("FPS: " + std::to_string(1.0f / ElapsedTime) + "Angle: " + std::to_string(m_player.getAngle()) + "Pos: " + std::to_string(m_player.getPosition().x) + "/" + std::to_string(m_player.getPosition().y) + "cooldown: " + std::to_string(m_coolDown));
-
-		update(ElapsedTime);
+		fixedUpdate(m_timeStep);
+		m_currentStep -= m_timeStep;
 	}
+	update(ElapsedTime);
 }
+
 
 void Game::fixedUpdate(float deltaTime)
 {

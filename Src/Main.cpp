@@ -1,11 +1,41 @@
 #include "Game.h"
 #include <SDL.h>
+#include <iostream>
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
+Game* game;
+
+#ifdef __EMSCRIPTEN__
+void webLoop()
+{
+	game->runLoop();
+}
+#endif
 
 int main(int argc, char *argv[])
 {
-	Game game;
-	game.start();
+	std::cout << "Before main game" << std::endl;
 
+	game = new Game;
+
+
+#ifdef __EMSCRIPTEN__
+	emscripten_set_main_loop(webLoop, 0, 1);
+
+	std::cout << "set main loop" << std::endl;
+#else
+
+	while (game->isRunning())
+	{
+		game->runLoop();
+	}
+
+	delete game;
+#endif
 
   return 0;
 }
+

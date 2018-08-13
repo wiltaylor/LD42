@@ -1,10 +1,15 @@
 #include "HudRenderer.h"
+#include <iostream>
 
 HUDRenderer::HUDRenderer(Renderer* render, Player* player) : m_renderer{render}, m_player{player}
 {
+	std::cout << "Loading hud renderer" << std::endl;
 	SDL_Texture* loading = m_renderer->getTextFromText("Loading...", { 255,255,255,0 });
+
 	m_renderer->drawTexture(loading, m_renderer->getScreenWidth() / 2 - 64, m_renderer->getScreenHeight() / 2 - 32, 128, 64);
 	m_renderer->flip();
+
+	std::cout << "Finished loading loading message..." << std::endl;
 
 	m_texture = loadTexture("hud.png");
 	m_wizard1 = loadTexture("wiz1.png");
@@ -20,11 +25,16 @@ HUDRenderer::HUDRenderer(Renderer* render, Player* player) : m_renderer{render},
 	m_bluekey = loadTexture("bluekeyicon.png");
 	m_greenkey = loadTexture("greenkeyicon.png");
 	m_goldkey = loadTexture("goldkeyicon.png");
-
+	
 	m_gameOver = m_renderer->getTextFromText("Game Over!", { 255,255,255,0});
 	m_gameOverSubText = m_renderer->getTextFromText("Press space to restart", { 255,255,255,0 });
 
+	std::cout << "Finished loading hub graphics" << std::endl;
+
 	update(0);
+
+	std::cout << "Finished loading hub renderer" << std::endl;
+
 }
 
 void HUDRenderer::draw() const

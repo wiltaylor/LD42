@@ -33,9 +33,9 @@ void AssetLoader::loadTexture(const std::string& filename, const std::string& na
 
 	auto out = SDL_GetPixelFormatName(surface->format->format);
 
-	if (surface->format->format == SDL_PIXELFORMAT_ARGB8888)
-		memcpy_s(result->data, dataSize * sizeof(Uint32), surface->pixels, dataSize * sizeof(Uint32));
-	else
+	//if (surface->format->format == SDL_PIXELFORMAT_ARGB8888)
+	//	memcpy_s(result->data, dataSize * sizeof(Uint32), surface->pixels, dataSize * sizeof(Uint32));
+//	else
 		SDL_ConvertPixels(surface->w, surface->h, surface->format->format, surface->pixels, surface->pitch, SDL_PIXELFORMAT_ABGR8888, result->data, surface->w * 4);
 
 	SDL_UnlockSurface(surface);
@@ -57,8 +57,11 @@ int AssetLoader::getTextureId(const std::string& name)
 
 Texture* AssetLoader::getTexture(const int id)
 {
+#ifndef __EMSCRIPTEN__
 	assert(id >= 0, "Id of texture is to small!");
-	assert(id  m_textures.size(), "Id of texture is over the bounds of the array!");
+	assert(id < m_textures.size(), "Id of texture is over the bounds of the array!");
+#endif
+
 
 	return m_textures[id];
 }

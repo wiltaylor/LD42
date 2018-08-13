@@ -1,23 +1,39 @@
 #include "Renderer.h"
+#include <iostream>
 
 Renderer::Renderer(const int width, const int height) : m_screenWidth{width}, m_screenHeight{height}
 {
 
+	std::cout << "Loading renderer" << std::endl;
+
 	SDL_CreateWindowAndRenderer(width, height,/* SDL_WINDOW_FULLSCREEN*/0, &m_window, &m_renderer);
+	
+	std::cout << "Window created" << std::endl;
+	
 	TTF_Init();
+
+	std::cout << "Font System loaded" << std::endl;
 
 	m_pixelbufferTexture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, width, height);
 	m_pixelBuffer = new Uint32[width * height];
 
-	m_font = TTF_OpenFont(R"(c:\windows\fonts\Arial.ttf)", 12);
+	std::cout << "Pixel buffer created" << std::endl;
 
-	if(!m_font)
-	{
-		printf(TTF_GetError());
-	}
-	
+#ifdef __EMSCRIPTEN__
+	m_font = TTF_OpenFont("arial.ttf", 12);
+
+#else
+	m_font = TTF_OpenFont(R"(c:\windows\fonts\Arial.ttf)", 12);
+#endif
+
+
+
+	std::cout << "Font Loaded" << std::endl;
+
 	cleanPixelBuffer();
 	flip();
+
+	std::cout << "Presented blank pixel buffer" << std::endl;
 }
 
 Renderer::~Renderer()
@@ -57,11 +73,17 @@ void Renderer::setPixel(const int x, const int y, const Uint32 colour) const
 
 void Renderer::drawTexture(SDL_Texture* texture) const
 {
+	if (texture == nullptr)
+		return;
+
 	SDL_RenderCopy(m_renderer, texture, nullptr, nullptr);
 }
 
 void Renderer::drawTexture(SDL_Texture* texture, int x, int y, int width, int height) const
 {
+	if (texture == nullptr)
+		return;
+
 	SDL_Rect dstRect = { x, y, width, height };
 	SDL_RenderCopy(m_renderer, texture, nullptr, &dstRect);
 }

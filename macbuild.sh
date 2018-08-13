@@ -1,10 +1,10 @@
 #!/bin/bash
 mkdir bin
 mkdir bin/macos
-mkdir bin/macos/TemplateOfHate.app
-mkdir bin/macos/TemplateOfHate.app/Contents
-mkdir bin/macos/TemplateOfHate.app/Contents/MacOS
-mkdir bin/macos/TemplateOfHate.app/Contents/Resources
+mkdir bin/macos/TempleOfHate.app
+mkdir bin/macos/TempleOfHate.app/Contents
+mkdir bin/macos/TempleOfHate.app/Contents/MacOS
+mkdir bin/macos/TempleOfHate.app/Contents/Resources
 
 cp Assets/* bin/macos/TemplateOfHate.app/Contents/Resources
 cp deploy/mac/Info.plist bin/macos/TemplateOfHate.app/Contents

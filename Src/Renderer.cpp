@@ -1,5 +1,7 @@
 #include "Renderer.h"
 #include <iostream>
+#include <SDL.h>
+#include <string>
 
 Renderer::Renderer(const int width, const int height) : m_screenWidth{width}, m_screenHeight{height}
 {
@@ -21,9 +23,15 @@ Renderer::Renderer(const int width, const int height) : m_screenWidth{width}, m_
 
 #ifdef __EMSCRIPTEN__
 	m_font = TTF_OpenFont("arial.ttf", 12);
-
 #else
-	m_font = TTF_OpenFont(R"(c:\windows\fonts\Arial.ttf)", 12);
+	#ifdef __APPLE__
+
+	    std::string macpath = SDL_GetBasePath();
+		macpath += "/arial.ttf";
+		m_font = TTF_OpenFont(macpath.c_str(), 12);
+	#else
+		m_font = TTF_OpenFont(R"(c:\windows\fonts\Arial.ttf)", 12);
+	#endif
 #endif
 
 

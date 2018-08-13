@@ -55,16 +55,20 @@ Game::Game()
 
 
 	m_pickupSound = m_assetLoader.getSoundClip("pickup");
+	std::cout << "1" << std::endl;
 	m_physics = new Physics(&m_player, &m_assetLoader);
-
+std::cout << "2" << std::endl;
 	m_level = new Level(&m_assetLoader, &m_player, m_hudRenderer, m_physics);
+	std::cout << "3" << std::endl;
 	m_physics->setLevel(m_level);
-
+std::cout << "4" << std::endl;
 	m_level->loadLevel(1);
+	std::cout << "5" << std::endl;
 
 	m_rayCastRenderer->setMapData(m_level, m_level->getWidth(), m_level->getHeight());
+	std::cout << "6" << std::endl;
 	m_renderer->setWindowTitle("Temple of Hate");
-
+std::cout << "7" << std::endl;
 	std::cout << "Finished loading game..." << std::endl;
 
 

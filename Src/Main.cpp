@@ -19,6 +19,8 @@ int main(int argc, char *argv[])
 {
 	std::cout << "Before main game" << std::endl;
 
+	std::cout << SDL_GetBasePath() << std::endl;
+
 	game = new Game;
 
 

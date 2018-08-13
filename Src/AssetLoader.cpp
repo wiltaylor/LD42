@@ -21,7 +21,13 @@ void AssetLoader::loadTexture(const std::string& filename, const std::string& na
 	const auto result = new Texture;
 	result->name = name;
 
-	SDL_Surface* surface = IMG_Load(filename.c_str());
+	#ifdef __APPLE__
+		auto macpath = SDL_GetBasePath() + filename;
+		SDL_Surface* surface = IMG_Load(macpath.c_str());
+	#else
+		SDL_Surface* surface = IMG_Load(filename.c_str());
+	#endif
+
 	result->width = surface->w;
 	result->height = surface->h;
 
@@ -57,18 +63,17 @@ int AssetLoader::getTextureId(const std::string& name)
 
 Texture* AssetLoader::getTexture(const int id)
 {
-#ifndef __EMSCRIPTEN__
-	assert(id >= 0, "Id of texture is to small!");
-	assert(id < m_textures.size(), "Id of texture is over the bounds of the array!");
-#endif
-
-
 	return m_textures[id];
 }
 
 void AssetLoader::loadSoundClip(const std::string& filename, const std::string& name)
 {
-	m_sounds.push_back(new SoundClip(filename, name));
+	#ifdef __APPLE__
+		auto macpath = SDL_GetBasePath() + filename;
+		m_sounds.push_back(new SoundClip(macpath, name));
+	#else
+		m_sounds.push_back(new SoundClip(filename, name));
+	#endif
 }
 
 SoundClip* AssetLoader::getSoundClip(const std::string& name)

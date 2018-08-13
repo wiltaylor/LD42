@@ -1,5 +1,5 @@
 #pragma once
-#include <sdl.h>
+#include <SDL.h>
 #ifdef __EMSCRIPTEN__
 	#include <SDL/SDL_mixer.h>
 #else

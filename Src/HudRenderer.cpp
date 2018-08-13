@@ -1,5 +1,6 @@
 #include "HudRenderer.h"
 #include <iostream>
+#include <SDL.h>
 
 HUDRenderer::HUDRenderer(Renderer* render, Player* player) : m_renderer{render}, m_player{player}
 {
@@ -79,7 +80,14 @@ void HUDRenderer::draw() const
 SDL_Texture* HUDRenderer::loadTexture(const std::string& filename)
 {
 
-	SDL_Surface* surface = IMG_Load(filename.c_str());
+	#ifdef __APPLE__
+	
+		auto macpath = SDL_GetBasePath() + filename;
+		SDL_Surface* surface = IMG_Load(macpath.c_str());
+	#else
+		SDL_Surface* surface = IMG_Load(filename.c_str());
+	#endif
+
 	SDL_Texture* texture = m_renderer->getTextFromSurface(surface);
 	SDL_FreeSurface(surface);
 

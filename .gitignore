@@ -32,3 +32,6 @@ ipch/
 *.vsp
 *.vspx
 *.sap
+
+#Apple specific
+.DS_Store

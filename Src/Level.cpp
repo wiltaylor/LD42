@@ -7,18 +7,33 @@
 #include <algorithm>
 #include "NPC.h"
 #include "Portal.h"
+#include <iostream>
+#include <SDL.h>
 
 void Level::loadLevel(int level)
 {
+	std::cout << "Loading level " << level << std::endl;
+
 	m_currentLevel = level;
-	const auto filename = "level" + std::to_string(level) + ".txt";
+	#ifdef __APPLE__
+		std::string macpath = SDL_GetBasePath();
+		const auto filename = macpath + "/level" + std::to_string(level) + ".txt";
+	#else
+		const auto filename = "level" + std::to_string(level) + ".txt";
+	#endif
+
+	std::cout << "using file " << filename << std::endl;
 
 //	for (auto &obj : m_gameObjects)
 //		delete obj;
 
 	m_gameObjects.clear();
 
+	std::cout << "Cleaning up existing game objects" << std::endl;
+
 	delete m_levelBlocks;
+
+	std::cout << "Cleaning out existing level geometry" << std::endl;
 
 	const auto pillarTexture = m_assetLoader->getTextureId("pillar");
 	const auto chestTexture = m_assetLoader->getTextureId("chest");
@@ -37,6 +52,8 @@ void Level::loadLevel(int level)
 	const auto portalTexture = m_assetLoader->getTextureId("portal");
 	const auto endPortalTexture = m_assetLoader->getTextureId("endportal");
 
+	std::cout << "Getting references to textures" << std::endl;
+
 
 	for (int i = 0; i < m_MaxProjectiles; i++)
 	{
@@ -54,8 +71,12 @@ void Level::loadLevel(int level)
 		m_gameObjects.push_back(projectile);
 	}
 
+	std::cout << "Created pool of projectiles" << std::endl;
+
 	std::ifstream levelFile;
 	levelFile.open(filename, std::ifstream::in);
+
+	std::cout << "Opened level file" << std::endl;
 
 	std::string line;
 	std::vector<std::string> levelData;
@@ -65,10 +86,14 @@ void Level::loadLevel(int level)
 		levelData.push_back(line);
 	}
 
+	std::cout << "Extracted Level data...closing file.." << std::endl;
+
 	levelFile.close();
 
 	m_height = levelData.size();
 	m_width = levelData.at(0).size();
+
+	std::cout << "Level Height: " << m_height << " Width: " << m_width << std::endl;
 
 	m_levelBlocks = new LevelBlock[m_height * m_width];
 
@@ -355,6 +380,9 @@ void Level::loadLevel(int level)
 			}
 		}
 	}
+
+		std::cout << "Finished loading level" << std::endl;
+
 }
 
 

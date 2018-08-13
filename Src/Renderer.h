@@ -1,7 +1,16 @@
 #pragma once
-#include <SDL.h>
+#ifndef __linux__
+	#include <SDL.h>
+#else
+	#include <SDL2/SDL.h>
+#endif
 #include <string>
-#include <SDL_ttf.h>
+
+#ifndef __linux__
+	#include <SDL_ttf.h>
+#else
+	#include <SDL2/SDL_ttf.h>
+#endif
 
 class Renderer
 {

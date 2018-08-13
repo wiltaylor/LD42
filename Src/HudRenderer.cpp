@@ -1,6 +1,10 @@
 #include "HudRenderer.h"
 #include <iostream>
-#include <SDL.h>
+#ifndef __linux__
+	#include <SDL.h>
+#else
+	#include <SDL2/SDL.h>
+#endif
 
 HUDRenderer::HUDRenderer(Renderer* render, Player* player) : m_renderer{render}, m_player{player}
 {

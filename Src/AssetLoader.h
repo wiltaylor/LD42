@@ -1,5 +1,9 @@
 #pragma once
-#include <SDL.h>
+#ifndef __linux__
+	#include <SDL.h>
+#else
+	#include <SDL2/SDL.h>
+#endif
 #include <vector>
 #include "SoundClip.h"
 

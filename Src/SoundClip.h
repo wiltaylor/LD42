@@ -1,7 +1,13 @@
 #pragma once
-#include <SDL.h>
+#ifndef __linux__
+	#include <SDL.h>
+#else
+	#include <SDL2/SDL.h>
+#endif
 #ifdef __EMSCRIPTEN__
 	#include <SDL/SDL_mixer.h>
+#elif __linux__
+	#include <SDL2/SDL_mixer.h>
 #else
 	#include <SDL_mixer.h>
 #endif

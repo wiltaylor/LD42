@@ -8,7 +8,11 @@
 #include "NPC.h"
 #include "Portal.h"
 #include <iostream>
-#include <SDL.h>
+#ifndef __linux__
+	#include <SDL.h>
+#else
+	#include <SDL2/SDL.h>
+#endif
 
 void Level::loadLevel(int level)
 {

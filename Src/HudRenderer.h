@@ -1,7 +1,16 @@
 #pragma once
 #include "Renderer.h"
-#include <SDL_image.h>
-#include <SDL.h>
+#ifndef __linux__
+	#include <SDL_image.h>
+#else
+	#include <SDL2/SDL_image.h>
+#endif
+
+#ifndef __linux__
+	#include <SDL.h>
+#else
+	#include <SDL2/SDL.h>
+#endif
 #include "Player.h"
 
 class HUDRenderer
